@@ -15,8 +15,10 @@ body {
 
 .app {
   height: 100%;
-  text-align: center;
   background-color: lightcyan;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
@@ -47,4 +49,12 @@ body {
 
 .type-dropdown option {
   height: 1.5em;
+}
+
+.timer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12em;
 }

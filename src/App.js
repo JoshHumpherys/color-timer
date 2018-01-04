@@ -53,6 +53,9 @@ class App extends Component {
           </select>
           <h1 className="scramble">{this.state.scramble}</h1>
         </header>
+        <div className="timer">
+          <p>15</p>
+        </div>
       </div>
     );
   }
