@@ -10,7 +10,7 @@ const types = {
   777: '7x7x7',
   clock: 'Clock',
   minx: 'Megaminx',
-  pryam: 'Pyraminx',
+  pyram: 'Pyraminx',
   sq1: 'Square 1',
   skewb: 'Skewb'
 };
@@ -42,18 +42,17 @@ class App extends Component {
     return (
       <div className="app">
         <header className="header">
+          <select className="type-dropdown" onChange={e => this.generateScramble(e.target.value)}>
+            {
+              Object.keys(types).map(key =>
+                <option key={key} value={key} selected={this.state.type === key ? 'selected' : ''}>
+                  {types[key]}
+                </option>
+              )
+            }
+          </select>
           <h1 className="scramble">{this.state.scramble}</h1>
         </header>
-        <br />
-        <select onChange={e => this.generateScramble(e.target.value)}>
-          {
-            Object.keys(types).map(key =>
-              <option key={key} value={key} selected={this.state.type === key ? 'selected' : ''}>
-                {types[key]}
-              </option>
-            )
-          }
-        </select>
       </div>
     );
   }
