@@ -31,18 +31,18 @@ class App extends Component {
   }
 
   changeType(type) {
-    this.setState({ type });
+    this.setState({ type }, this.generateScramble);
   }
 
-  generateScramble(type) {
-    this.setState({ scramble: this.state.scrambo.type(type).get() });
+  generateScramble() {
+    this.setState({ scramble: this.state.scrambo.type(this.state.type).get() });
   }
 
   render() {
     return (
       <div className="app">
         <header className="header">
-          <select className="type-dropdown" onChange={e => this.generateScramble(e.target.value)}>
+          <select className="header-button" onChange={e => this.changeType(e.target.value)}>
             {
               Object.keys(types).map(key =>
                 <option key={key} value={key} selected={this.state.type === key ? 'selected' : ''}>
@@ -51,6 +51,9 @@ class App extends Component {
               )
             }
           </select>
+          <button className="header-button centered-text" onClick={e => this.generateScramble(this.state.type)}>
+            Next
+          </button>
           <h1 className="scramble">{this.state.scramble}</h1>
         </header>
         <div className="timer">

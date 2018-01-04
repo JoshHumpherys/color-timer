@@ -33,7 +33,7 @@ body {
   flex: 1;
 }
 
-.type-dropdown {
+.header-button {
   width: 5.5em;
   color: white;
   background-color: deepskyblue;
@@ -45,6 +45,12 @@ body {
   -webkit-appearance: none;
   -moz-appearance: none;
   text-indent: 10px;
+  margin-right: 10px;
+}
+
+.centered-text {
+  text-indent: 0;
+  text-align: center;
 }
 
 .type-dropdown option {
