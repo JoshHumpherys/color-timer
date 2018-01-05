@@ -1,5 +1,6 @@
 import * as actionTypes from '../constants/actionTypes'
-import  Scrambo from 'scrambo';
+import * as stateTypes from '../constants/stateTypes'
+import  Scrambo from 'scrambo'
 
 export default function timer(
   state = {
@@ -17,7 +18,8 @@ export default function timer(
       sq1: new Scrambo().type('sq1'),
       skewb: new Scrambo().type('skewb')
     },
-    scramble: new Scrambo().get() // TODO don't make another Scrambo objects
+    scramble: new Scrambo().get(), // TODO don't make another Scrambo objects
+    state: stateTypes.WAITING
   },
   action) {
   switch (action.type) {
@@ -26,6 +28,9 @@ export default function timer(
     }
     case actionTypes.SCRAMBLE_GENERATED: {
       return { ...state, scramble: state.scrambos[action.payload.type].get() };
+    }
+    case actionTypes.STATE_SET: {
+      return { ...state, state: action.payload.state };
     }
     default: {
       return state;

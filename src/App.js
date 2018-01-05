@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { setType, generateScramble } from './actions/timer'
-import { getType, getScrambo, getScramble } from './selectors/timer'
+import { setType, generateScramble, setState } from './actions/timer'
+import { getType, getScrambo, getScramble, getState } from './selectors/timer'
+import * as stateTypes from './constants/stateTypes'
 
 const types = {
   222: '2x2x2',
@@ -34,6 +35,19 @@ class App extends Component {
     this.props.dispatch(generateScramble(type));
   }
 
+  componentDidMount() {
+    document.addEventListener('keydown', e => {
+      if(e.keyCode === 32) {
+        this.props.dispatch(setState(stateTypes.READY));
+      }
+    });
+    document.addEventListener('keyup', e => {
+      if(e.keyCode === 32) {
+        this.props.dispatch(setState(stateTypes.WAITING));
+      }
+    });
+  }
+
   render() {
     return (
       <div className="app">
@@ -52,7 +66,7 @@ class App extends Component {
           </button>
           <h1 className="scramble">{this.props.scramble}</h1>
         </header>
-        <div className="timer">
+        <div className={'timer' + (this.props.state === stateTypes.READY ? ' ready' : '')}>
           <p className="timer-text">15</p>
         </div>
       </div>
@@ -64,6 +78,7 @@ export default connect(
   state => ({
     type: getType(state),
     scrambo: getScrambo(state),
-    scramble: getScramble(state)
+    scramble: getScramble(state),
+    state: getState(state)
   })
 )(App);
