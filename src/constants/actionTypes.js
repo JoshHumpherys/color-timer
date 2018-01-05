@@ -1,0 +1,2 @@
+export const TYPE_SET = 'TYPE_SET';
+export const SCRAMBLE_GENERATED = 'SCRAMBLE_GENERATED';

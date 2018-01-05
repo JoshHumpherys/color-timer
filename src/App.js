@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import Scrambo from 'scrambo'
+import { connect } from 'react-redux'
+import { setType, generateScramble } from './actions/timer'
+import { getType, getScrambo, getScramble } from './selectors/timer'
 
 const types = {
   222: '2x2x2',
@@ -19,42 +21,36 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    const scrambo = new Scrambo();
-
-    this.state = {
-      scrambo,
-      type: '333',
-      scramble: scrambo.get()[0]
-    };
-
+    this.setType = this.setType.bind(this);
     this.generateScramble = this.generateScramble.bind(this);
   }
 
-  changeType(type) {
-    this.setState({ type }, this.generateScramble);
+  setType(type) {
+    this.props.dispatch(setType(type));
+    this.generateScramble(type);
   }
 
-  generateScramble() {
-    this.setState({ scramble: this.state.scrambo.type(this.state.type).get() });
+  generateScramble(type) {
+    this.props.dispatch(generateScramble(type));
   }
 
   render() {
     return (
       <div className="app">
         <header className="header">
-          <select className="header-button" onChange={e => this.changeType(e.target.value)}>
+          <select className="header-button" onChange={e => this.setType(e.target.value)}>
             {
               Object.keys(types).map(key =>
-                <option key={key} value={key} selected={this.state.type === key ? 'selected' : ''}>
+                <option key={key} value={key} selected={this.props.type === key ? 'selected' : ''}>
                   {types[key]}
                 </option>
               )
             }
           </select>
-          <button className="header-button centered-text" onClick={e => this.generateScramble(this.state.type)}>
+          <button className="header-button centered-text" onClick={e => this.generateScramble(this.props.type)}>
             Next
           </button>
-          <h1 className="scramble">{this.state.scramble}</h1>
+          <h1 className="scramble">{this.props.scramble}</h1>
         </header>
         <div className="timer">
           <p className="timer-text">15</p>
@@ -64,4 +60,10 @@ class App extends Component {
   }
 }
 
-export default App;
+export default connect(
+  state => ({
+    type: getType(state),
+    scrambo: getScrambo(state),
+    scramble: getScramble(state)
+  })
+)(App);
