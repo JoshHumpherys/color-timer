@@ -57,7 +57,7 @@ class App extends Component {
           <h1 className="scramble">{this.state.scramble}</h1>
         </header>
         <div className="timer">
-          <p>15</p>
+          <p className="timer-text">15</p>
         </div>
       </div>
     );
