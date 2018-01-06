@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { setType, generateScramble, setState } from './actions/timer'
-import { getType, getScrambo, getScramble, getState } from './selectors/timer'
+import { setType, generateScramble, setState, startHolding, stopHolding, startTimer, stopTimer } from './actions/timer'
+import { getType, getScrambo, getScramble, getState, getHoldingStartTime, getTime } from './selectors/timer'
 import * as stateTypes from './constants/stateTypes'
 
 const types = {
@@ -38,12 +38,26 @@ class App extends Component {
   componentDidMount() {
     document.addEventListener('keydown', e => {
       if(e.keyCode === 32) {
-        this.props.dispatch(setState(stateTypes.READY));
+        const now = Date.now();
+        if(this.props.state === stateTypes.IDLE) {
+          this.props.dispatch(startHolding(now));
+        } else if(this.props.state === stateTypes.RUNNING) {
+          this.props.dispatch(stopTimer(now))
+        } else if(now - this.props.holdingStartTime >= 0.5) {
+          // TODO put hold time in settings
+          // TODO handle if hold time is less than the time it takes keydown to repetitively fire
+          this.props.dispatch(setState(stateTypes.READY));
+        }
       }
     });
     document.addEventListener('keyup', e => {
       if(e.keyCode === 32) {
-        this.props.dispatch(setState(stateTypes.WAITING));
+        const now = Date.now();
+        if(this.props.state === stateTypes.READY) {
+          this.props.dispatch(startTimer(now));
+        } else {
+          this.props.dispatch(stopHolding());
+        }
       }
     });
   }
@@ -67,7 +81,7 @@ class App extends Component {
           <h1 className="scramble">{this.props.scramble}</h1>
         </header>
         <div className={'timer' + (this.props.state === stateTypes.READY ? ' ready' : '')}>
-          <p className="timer-text">15</p>
+          <p className="timer-text">{this.props.state === stateTypes.RUNNING ? 'Solving' : this.props.time / 1000}</p>
         </div>
       </div>
     );
@@ -79,6 +93,8 @@ export default connect(
     type: getType(state),
     scrambo: getScrambo(state),
     scramble: getScramble(state),
-    state: getState(state)
+    state: getState(state),
+    holdingStartTime: getHoldingStartTime(state),
+    time: getTime(state)
   })
 )(App);

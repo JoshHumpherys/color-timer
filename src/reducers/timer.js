@@ -19,7 +19,10 @@ export default function timer(
       skewb: new Scrambo().type('skewb')
     },
     scramble: new Scrambo().get(), // TODO don't make another Scrambo objects
-    state: stateTypes.WAITING
+    state: stateTypes.IDLE,
+    holdingStartTime: null,
+    runningStartTime: null,
+    time: 0
   },
   action) {
   switch (action.type) {
@@ -31,6 +34,29 @@ export default function timer(
     }
     case actionTypes.STATE_SET: {
       return { ...state, state: action.payload.state };
+    }
+    case actionTypes.HOLDING_STARTED: {
+      return { ...state, state: stateTypes.HOLDING, holdingStartTime: action.payload.holdingStartTime };
+    }
+    case actionTypes.HOLDING_STOPPED: {
+      return { ...state, state: stateTypes.IDLE, holdingStartTime: null };
+    }
+    case actionTypes.TIMER_STARTED: {
+      return {
+        ...state,
+        state: stateTypes.RUNNING,
+        runningStartTime: action.payload.runningStartTime,
+        holdingStartTime: null
+      };
+    }
+    case actionTypes.TIMER_STOPPED: {
+      return {
+        ...state,
+        state: stateTypes.IDLE,
+        runningStartTime: null,
+        time: action.payload.runningStopTime - state.runningStartTime,
+        scramble: state.scrambos[state.type].get()
+      };
     }
     default: {
       return state;
