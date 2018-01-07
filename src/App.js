@@ -81,7 +81,9 @@ class App extends Component {
           <h1 className="scramble">{this.props.scramble}</h1>
         </header>
         <div className={'timer' + (this.props.state === stateTypes.READY ? ' ready' : '')}>
-          <p className="timer-text">{this.props.state === stateTypes.RUNNING ? 'Solving' : this.props.time / 1000}</p>
+          <p className="timer-text">
+            {this.props.state === stateTypes.RUNNING ? 'Solving' : Math.floor(this.props.time / 10) / 100}
+          </p>
         </div>
       </div>
     );
