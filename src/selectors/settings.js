@@ -1,1 +1,2 @@
-export const getInspectionTime = state => state.settings.inspectionTime;
+export const getInspection = state => state.settings.inspection;
+export const getHoldTimeType = state => state.settings.holdTime;

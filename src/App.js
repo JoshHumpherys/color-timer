@@ -2,9 +2,11 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { setType, generateScramble, setState, startHolding, stopHolding, startTimer, stopTimer } from './actions/timer'
 import { getType, getScrambo, getScramble, getState, getHoldingStartTime, getTime } from './selectors/timer'
-import { getInspectionTime } from './selectors/settings'
+import { getInspection, getHoldTimeType } from './selectors/settings'
 import * as stateTypes from './constants/stateTypes'
+import * as holdTimeTypes from './constants/holdTimeTypes'
 
+// TODO move these to a constants file?
 const types = {
   222: '2x2x2',
   333: '3x3x3',
@@ -17,6 +19,14 @@ const types = {
   pyram: 'Pyraminx',
   sq1: 'Square 1',
   skewb: 'Skewb'
+};
+
+// TODO move these to a constants file?
+const holdTimes = {
+  [holdTimeTypes.NONE]: 0,
+  [holdTimeTypes.THREE_TENTHS_SECOND]: 0.3,
+  [holdTimeTypes.STACK_MAT]: 0.55,
+  [holdTimeTypes.ONE_SECOND]: 1
 };
 
 class App extends Component {
@@ -44,8 +54,7 @@ class App extends Component {
           this.props.dispatch(startHolding(now));
         } else if(this.props.state === stateTypes.RUNNING) {
           this.props.dispatch(stopTimer(now))
-        } else if(now - this.props.holdingStartTime >= 0.5) {
-          // TODO put hold time in settings
+        } else if(now - this.props.holdingStartTime >= this.props.holdTime * 1000) {
           // TODO handle if hold time is less than the time it takes keydown to repetitively fire
           this.props.dispatch(setState(stateTypes.READY));
         }
@@ -80,7 +89,6 @@ class App extends Component {
             Next
           </button>
           <h1 className="scramble">{this.props.scramble}</h1>
-          <h3>Inspection time: {this.props.inspectionTime}</h3>
         </header>
         <div className={'timer' + (this.props.state === stateTypes.READY ? ' ready' : '')}>
           <p className="timer-text">
@@ -100,6 +108,7 @@ export default connect(
     state: getState(state),
     holdingStartTime: getHoldingStartTime(state),
     time: getTime(state),
-    inspectionTime: getInspectionTime(state)
+    inspection: getInspection(state),
+    holdTime: holdTimes[getHoldTimeType(state)]
   })
 )(App);
