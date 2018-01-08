@@ -1,0 +1,1 @@
+export const getInspectionTime = state => state.settings.inspectionTime;

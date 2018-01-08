@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { setType, generateScramble, setState, startHolding, stopHolding, startTimer, stopTimer } from './actions/timer'
 import { getType, getScrambo, getScramble, getState, getHoldingStartTime, getTime } from './selectors/timer'
+import { getInspectionTime } from './selectors/settings'
 import * as stateTypes from './constants/stateTypes'
 
 const types = {
@@ -79,6 +80,7 @@ class App extends Component {
             Next
           </button>
           <h1 className="scramble">{this.props.scramble}</h1>
+          <h3>Inspection time: {this.props.inspectionTime}</h3>
         </header>
         <div className={'timer' + (this.props.state === stateTypes.READY ? ' ready' : '')}>
           <p className="timer-text">
@@ -97,6 +99,7 @@ export default connect(
     scramble: getScramble(state),
     state: getState(state),
     holdingStartTime: getHoldingStartTime(state),
-    time: getTime(state)
+    time: getTime(state),
+    inspectionTime: getInspectionTime(state)
   })
 )(App);
