@@ -1,3 +1,4 @@
+// timer
 export const TYPE_SET = 'TYPE_SET';
 export const SCRAMBLE_GENERATED = 'SCRAMBLE_GENERATED';
 export const STATE_SET = 'STATE_SET';
@@ -5,5 +6,8 @@ export const HOLDING_STARTED = 'HOLDING_STARTED';
 export const HOLDING_STOPPED = 'HOLDING_STOPPED';
 export const TIMER_STARTED = 'TIMER_STARTED';
 export const TIMER_STOPPED = 'TIMER_STOPPED';
+
+// settings
 export const INSPECTION_SET = 'INSPECTION_SET';
 export const HOLD_TIME_SET = 'HOLD_TIME_SET';
+export const DISPLAY_MILLIS_SET = 'DISPLAY_MILLIS_SET';

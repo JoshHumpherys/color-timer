@@ -7,3 +7,7 @@ export function setInspection(inspection) {
 export function setHoldTime(holdTime) {
   return { type: actionTypes.HOLD_TIME_SET, payload: { holdTime } };
 }
+
+export function setDisplayMillis(displayMillis) {
+  return { type: actionTypes.DISPLAY_MILLIS_SET, payload: { displayMillis } };
+}

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { setType, generateScramble, setState, startHolding, stopHolding, startTimer, stopTimer } from './actions/timer'
 import { getType, getScrambo, getScramble, getState, getHoldingStartTime, getTime } from './selectors/timer'
-import { getInspection, getHoldTimeType } from './selectors/settings'
+import { getInspection, getHoldTimeType, getDisplayMillis } from './selectors/settings'
 import * as stateTypes from './constants/stateTypes'
 import * as holdTimeTypes from './constants/holdTimeTypes'
 
@@ -35,6 +35,7 @@ class App extends Component {
 
     this.setType = this.setType.bind(this);
     this.generateScramble = this.generateScramble.bind(this);
+    this.getDisplayTime = this.getDisplayTime.bind(this);
   }
 
   setType(type) {
@@ -44,6 +45,14 @@ class App extends Component {
 
   generateScramble(type) {
     this.props.dispatch(generateScramble(type));
+  }
+
+  getDisplayTime(timeMillis) {
+    const timeMillisString = timeMillis.toString();
+    const leadingZero = timeMillisString.length < 4 ? '0' : '';
+    const trailingZeros = new Array(Math.max(3 - timeMillisString.length, 0)).fill('0').join('');
+    const timeString = leadingZero + timeMillisString.slice(0, -3) + '.' + timeMillisString.slice(-3) + trailingZeros;
+    return timeString.slice(0, this.props.displayMillis ? 0 : -1);
   }
 
   componentDidMount() {
@@ -92,7 +101,7 @@ class App extends Component {
         </header>
         <div className={'timer' + (this.props.state === stateTypes.READY ? ' ready' : '')}>
           <p className="timer-text">
-            {this.props.state === stateTypes.RUNNING ? 'Solving' : Math.floor(this.props.time / 10) / 100}
+            {this.props.state === stateTypes.RUNNING ? 'Solving' : this.getDisplayTime(this.props.time)}
           </p>
         </div>
       </div>
@@ -109,6 +118,7 @@ export default connect(
     holdingStartTime: getHoldingStartTime(state),
     time: getTime(state),
     inspection: getInspection(state),
-    holdTime: holdTimes[getHoldTimeType(state)]
+    holdTime: holdTimes[getHoldTimeType(state)],
+    displayMillis: getDisplayMillis(state)
   })
 )(App);
