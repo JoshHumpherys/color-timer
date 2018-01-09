@@ -48,11 +48,18 @@ class App extends Component {
   }
 
   getDisplayTime(timeMillis) {
-    const timeMillisString = timeMillis.toString();
-    const leadingZero = timeMillisString.length < 4 ? '0' : '';
-    const trailingZeros = new Array(Math.max(3 - timeMillisString.length, 0)).fill('0').join('');
-    const timeString = leadingZero + timeMillisString.slice(0, -3) + '.' + timeMillisString.slice(-3) + trailingZeros;
-    return timeString.slice(0, this.props.displayMillis ? 0 : -1);
+    const millis = timeMillis % 1000;
+    const secs = Math.floor(timeMillis / 1000) % 60;
+    const mins = Math.floor(timeMillis / 1000 / 60) % 60;
+    const hrs = Math.floor(timeMillis / 1000 / 60 / 60);
+    const getComponent = time => ((time < 10) ? '0' + time : time.toString()).slice(0, 2);
+    const millisString = (millis < 10 ? '00' : (millis < 100 ? '0' : '')) + millis + '000';
+    return (
+      (hrs !== 0 ? hrs + ':' : '') +
+      (mins !== 0 ? (hrs !== 0 ? getComponent(mins) : mins) + ':' : '') +
+      (secs !== 0 ? (mins !== 0 || hrs !== 0 ? getComponent(secs) : secs) + '.' : '') +
+      (secs === 0 ? '0.' : '') + millisString.toString().slice(0, this.props.displayMillis ? 3 : 2)
+    );
   }
 
   componentDidMount() {
