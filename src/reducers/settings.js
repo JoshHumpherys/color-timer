@@ -5,7 +5,8 @@ export default function settings(
   state = {
     inspection: true,
     holdTime: holdTimeTypes.STACK_MAT,
-    displayMillis: false
+    displayMillis: false,
+    hideSolveTime: false
   },
   action) {
   switch (action.type) {

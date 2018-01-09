@@ -1,8 +1,16 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { setType, generateScramble, setState, startHolding, stopHolding, startTimer, stopTimer } from './actions/timer'
-import { getType, getScrambo, getScramble, getState, getHoldingStartTime, getTime } from './selectors/timer'
-import { getInspection, getHoldTimeType, getDisplayMillis } from './selectors/settings'
+import {
+  getType,
+  getScrambo,
+  getScramble,
+  getState,
+  getHoldingStartTime,
+  getRunningStartTime,
+  getTime
+} from './selectors/timer'
+import { getInspection, getHoldTimeType, getDisplayMillis, getHideSolveTime } from './selectors/settings'
 import * as stateTypes from './constants/stateTypes'
 import * as holdTimeTypes from './constants/holdTimeTypes'
 
@@ -86,9 +94,29 @@ class App extends Component {
         }
       }
     });
+    setInterval(this.forceUpdate.bind(this), 20);
   }
 
   render() {
+    let displayTime;
+    switch(this.props.state) {
+      case stateTypes.RUNNING:
+        if(this.props.hideSolveTime) {
+          displayTime = 'Solving';
+        } else {
+          displayTime = this.getDisplayTime(Date.now() - this.props.runningStartTime);
+        }
+        break;
+      case stateTypes.IDLE:
+        displayTime = this.getDisplayTime(this.props.time);
+        break;
+      case stateTypes.HOLDING:
+        displayTime = this.getDisplayTime(this.props.time);
+        break;
+      case stateTypes.READY:
+        displayTime = this.getDisplayTime(0);
+        break;
+    }
     return (
       <div className="app">
         <header className="header">
@@ -108,7 +136,7 @@ class App extends Component {
         </header>
         <div className={'timer' + (this.props.state === stateTypes.READY ? ' ready' : '')}>
           <p className="timer-text">
-            {this.props.state === stateTypes.RUNNING ? 'Solving' : this.getDisplayTime(this.props.time)}
+            {displayTime}
           </p>
         </div>
       </div>
@@ -123,9 +151,11 @@ export default connect(
     scramble: getScramble(state),
     state: getState(state),
     holdingStartTime: getHoldingStartTime(state),
+    runningStartTime: getRunningStartTime(state),
     time: getTime(state),
     inspection: getInspection(state),
     holdTime: holdTimes[getHoldTimeType(state)],
-    displayMillis: getDisplayMillis(state)
+    displayMillis: getDisplayMillis(state),
+    hideSolveTime: getHideSolveTime(state)
   })
 )(App);
