@@ -96,9 +96,10 @@ class App extends Component {
     const millisString = (millis < 10 ? '00' : (millis < 100 ? '0' : '')) + millis + '000';
     return (
       (hrs !== 0 ? hrs + ':' : '') +
-      (mins !== 0 ? (hrs !== 0 ? getComponent(mins) : mins) + ':' : '') +
-      (secs !== 0 ? (mins !== 0 || hrs !== 0 ? getComponent(secs) : secs) + '.' : '') +
-      (secs === 0 ? '0.' : '') + millisString.toString().slice(0, this.props.displayMillis ? 3 : 2)
+      (mins !== 0 || hrs !== 0 ? (hrs !== 0 ? getComponent(mins) : mins) + ':' : '') +
+      (secs !== 0 || mins !== 0 || hrs !== 0 ? (mins !== 0 || hrs !== 0 ? getComponent(secs) : secs) + '.' : '') +
+      (secs === 0 && mins === 0 && hrs === 0 ? '0.' : '') +
+      millisString.toString().slice(0, this.props.displayMillis ? 3 : 2)
     );
   }
 
@@ -193,6 +194,15 @@ class App extends Component {
         break;
     }
 
+    let displayTimeDivClassName = 'timer-text';
+    if(displayTime.length >= 11) {
+      displayTimeDivClassName += ' timer-text-smallest'
+    } else if(displayTime.length >= 6) {
+      displayTimeDivClassName += ' timer-text-small';
+    } else if(displayTime.length >= 4) {
+      displayTimeDivClassName += ' timer-text-medium';
+    }
+
     let modalContents;
     switch(this.props.modalType) {
       case modalTypes.SETTINGS_MODAL:
@@ -253,7 +263,6 @@ class App extends Component {
         modalContents = { header: null, body: null, actions: null };
     }
 
-
     return (
       <div className="app">
         <header className="header">
@@ -275,7 +284,7 @@ class App extends Component {
           }>Settings</button>
         </header>
         <div className={'timer' + (this.isReady(now) ? ' ready' : '')}>
-          <p className="timer-text">
+          <p className={displayTimeDivClassName}>
             {displayTime}
           </p>
         </div>

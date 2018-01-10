@@ -97,3 +97,15 @@ body {
 .timer-text {
   margin-top: calc(20%); /* TODO figure out why the text baseline is off */
 }
+
+.timer-text-medium {
+  font-size: 25vw;
+}
+
+.timer-text-small {
+  font-size: 20vw;
+}
+
+.timer-text-smallest {
+  font-size: 15vw;
+}
