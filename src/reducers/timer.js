@@ -20,8 +20,11 @@ export default function timer(
     },
     scramble: new Scrambo().get(), // TODO don't make another Scrambo objects
     state: stateTypes.IDLE,
+    inspectionStartTime: null,
     holdingStartTime: null,
     runningStartTime: null,
+    spacebarIsDown: false,
+    timerJustStopped: false,
     time: 0
   },
   action) {
@@ -35,18 +38,22 @@ export default function timer(
     case actionTypes.STATE_SET: {
       return { ...state, state: action.payload.state };
     }
+    case actionTypes.INSPECTION_STARTED: {
+      return { ...state, state: stateTypes.INSPECTION, inspectionStartTime: action.payload.inspectionStartTime };
+    }
     case actionTypes.HOLDING_STARTED: {
-      return { ...state, state: stateTypes.HOLDING, holdingStartTime: action.payload.holdingStartTime };
+      return { ...state, holdingStartTime: action.payload.holdingStartTime };
     }
     case actionTypes.HOLDING_STOPPED: {
-      return { ...state, state: stateTypes.IDLE, holdingStartTime: null };
+      return { ...state, holdingStartTime: null };
     }
     case actionTypes.TIMER_STARTED: {
       return {
         ...state,
         state: stateTypes.RUNNING,
         runningStartTime: action.payload.runningStartTime,
-        holdingStartTime: null
+        holdingStartTime: null,
+        inspectionStartTime: null
       };
     }
     case actionTypes.TIMER_STOPPED: {
@@ -55,8 +62,13 @@ export default function timer(
         state: stateTypes.IDLE,
         runningStartTime: null,
         time: action.payload.runningStopTime - state.runningStartTime,
-        scramble: state.scrambos[state.type].get()
+        scramble: state.scrambos[state.type].get(),
+        timerJustStopped: true
       };
+    }
+    case actionTypes.SPACEBAR_IS_DOWN_SET: {
+      const { spacebarIsDown } = action.payload;
+      return { ...state, spacebarIsDown, timerJustStopped: state.timerJustStopped && !spacebarIsDown };
     }
     default: {
       return state;

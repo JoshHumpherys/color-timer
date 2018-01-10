@@ -12,6 +12,10 @@ export function setState(state) {
   return { type: actionTypes.STATE_SET, payload: { state } };
 }
 
+export function startInspection(inspectionStartTime) {
+  return { type: actionTypes.INSPECTION_STARTED, payload: { inspectionStartTime } };
+}
+
 export function startHolding(holdingStartTime) {
   return { type: actionTypes.HOLDING_STARTED, payload: { holdingStartTime } };
 }
@@ -26,4 +30,8 @@ export function startTimer(runningStartTime) {
 
 export function stopTimer(runningStopTime) {
   return { type: actionTypes.TIMER_STOPPED, payload: { runningStopTime } };
+}
+
+export function setSpacebarIsDown(spacebarIsDown) {
+  return { type: actionTypes.SPACEBAR_IS_DOWN_SET, payload: { spacebarIsDown } };
 }

@@ -1,7 +1,16 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Button, Checkbox, Dropdown, Modal } from 'semantic-ui-react'
-import { setType, generateScramble, setState, startHolding, stopHolding, startTimer, stopTimer } from './actions/timer'
+import {
+  setType,
+  generateScramble,
+  startInspection,
+  startHolding,
+  stopHolding,
+  startTimer,
+  stopTimer,
+  setSpacebarIsDown
+} from './actions/timer'
 import { setDisplayMillis, setInspection, setHideSolveTime, setHoldTime } from './actions/settings'
 import { createModal, removeModal } from './actions/modal'
 import {
@@ -9,8 +18,11 @@ import {
   getScrambo,
   getScramble,
   getState,
+  getInspectionStartTime,
   getHoldingStartTime,
   getRunningStartTime,
+  getSpacebarIsDown,
+  getTimerJustStopped,
   getTime
 } from './selectors/timer'
 import { getInspection, getHoldTimeType, getDisplayMillis, getHideSolveTime } from './selectors/settings'
@@ -63,6 +75,7 @@ class App extends Component {
     this.setType = this.setType.bind(this);
     this.generateScramble = this.generateScramble.bind(this);
     this.getDisplayTime = this.getDisplayTime.bind(this);
+    this.isReady = this.isReady.bind(this);
   }
 
   setType(type) {
@@ -89,51 +102,94 @@ class App extends Component {
     );
   }
 
+  isReady(now) {
+    return this.props.holdingStartTime !== null && now - this.props.holdingStartTime >= this.props.holdTime * 1000;
+  }
+
   componentDidMount() {
     document.addEventListener('keydown', e => {
-      if(e.keyCode === 32) {
-        const now = Date.now();
-        if(this.props.state === stateTypes.IDLE) {
-          this.props.dispatch(startHolding(now));
-        } else if(this.props.state === stateTypes.RUNNING) {
-          this.props.dispatch(stopTimer(now))
-        } else if(now - this.props.holdingStartTime >= this.props.holdTime * 1000) {
-          // TODO handle if hold time is less than the time it takes keydown to repetitively fire
-          this.props.dispatch(setState(stateTypes.READY));
-        }
+      if(e.keyCode === 32 && !this.props.spacebarIsDown) {
+        this.props.dispatch(setSpacebarIsDown(true));
       }
     });
     document.addEventListener('keyup', e => {
-      if(e.keyCode === 32) {
-        const now = Date.now();
-        if(this.props.state === stateTypes.READY) {
-          this.props.dispatch(startTimer(now));
-        } else {
-          this.props.dispatch(stopHolding());
-        }
+      if(e.keyCode === 32 && this.props.spacebarIsDown) {
+        this.props.dispatch(setSpacebarIsDown(false));
       }
     });
     setInterval(this.forceUpdate.bind(this), 20);
   }
 
+  componentDidUpdate(prevProps) {
+    const now = Date.now();
+    if(this.props.spacebarIsDown && !prevProps.spacebarIsDown) {
+      switch(this.props.state) {
+        case stateTypes.IDLE:
+          if(!this.props.inspection) {
+            this.props.dispatch(startHolding(now));
+          }
+          break;
+        case stateTypes.INSPECTION:
+            this.props.dispatch(startHolding(now));
+          break;
+        case stateTypes.RUNNING:
+            this.props.dispatch(stopTimer(now));
+          break;
+      }
+    } else if(!this.props.spacebarIsDown && prevProps.spacebarIsDown) {
+      switch(this.props.state) {
+        case stateTypes.IDLE:
+          if(!this.props.timerJustStopped) {
+            if(this.props.inspection) {
+              this.props.dispatch(startInspection(now));
+            } else if(this.isReady(now)) {
+              this.props.dispatch(startTimer(now));
+            } else {
+              this.props.dispatch(stopHolding());
+            }
+          }
+          break;
+        case stateTypes.INSPECTION:
+          if(this.isReady(now)) {
+            this.props.dispatch(startTimer(now));
+          } else {
+            this.props.dispatch(stopHolding());
+          }
+          break;
+        case stateTypes.RUNNING:
+          // Should never reach this state
+          break;
+      }
+    }
+    if(this.props.state === stateTypes.INSPECTION) {
+      // TODO handle +2 and DNF during inspection
+    }
+  }
+
   render() {
+    const now = Date.now();
     let displayTime;
     switch(this.props.state) {
+      case stateTypes.IDLE:
+        displayTime = this.getDisplayTime(this.props.time);
+        break;
+      case stateTypes.INSPECTION:
+        const inspectionTimeRemaining = Math.ceil(15 - (now - this.props.inspectionStartTime) / 1000);
+        console.log(this.props.inspectionStartTime);
+        if(inspectionTimeRemaining > 0) {
+          displayTime = inspectionTimeRemaining.toString();
+        } else if(inspectionTimeRemaining > -2) {
+          displayTime = '+2';
+        } else {
+          displayTime = 'DNF';
+        }
+        break;
       case stateTypes.RUNNING:
         if(this.props.hideSolveTime) {
           displayTime = 'Solving';
         } else {
           displayTime = this.getDisplayTime(Date.now() - this.props.runningStartTime);
         }
-        break;
-      case stateTypes.IDLE:
-        displayTime = this.getDisplayTime(this.props.time);
-        break;
-      case stateTypes.HOLDING:
-        displayTime = this.getDisplayTime(this.props.time);
-        break;
-      case stateTypes.READY:
-        displayTime = this.getDisplayTime(0);
         break;
     }
 
@@ -218,7 +274,7 @@ class App extends Component {
             () => this.props.dispatch(createModal(modalTypes.SETTINGS_MODAL))
           }>Settings</button>
         </header>
-        <div className={'timer' + (this.props.state === stateTypes.READY ? ' ready' : '')}>
+        <div className={'timer' + (this.isReady(now) ? ' ready' : '')}>
           <p className="timer-text">
             {displayTime}
           </p>
@@ -248,8 +304,11 @@ export default connect(
       scrambo: getScrambo(state),
       scramble: getScramble(state),
       state: getState(state),
+      inspectionStartTime: getInspectionStartTime(state),
       holdingStartTime: getHoldingStartTime(state),
       runningStartTime: getRunningStartTime(state),
+      spacebarIsDown: getSpacebarIsDown(state),
+      timerJustStopped: getTimerJustStopped(state),
       time: getTime(state),
       inspection: getInspection(state),
       holdTimeType,
