@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux'
 import timer from './timer'
 import settings from './settings'
+import modal from './modal'
 
 const rootReducer = combineReducers({
   timer,
-  settings
+  settings,
+  modal
 });
 
 export default rootReducer;

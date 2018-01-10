@@ -3,8 +3,8 @@ import * as holdTimeTypes from '../constants/holdTimeTypes'
 
 export default function settings(
   state = {
-    inspection: true,
-    holdTime: holdTimeTypes.STACK_MAT,
+    inspection: false,
+    holdTime: holdTimeTypes.THREE_TENTHS_SECOND,
     displayMillis: false,
     hideSolveTime: false
   },
@@ -18,6 +18,9 @@ export default function settings(
     }
     case actionTypes.DISPLAY_MILLIS_SET: {
       return { ...state, displayMillis: action.payload.displayMillis };
+    }
+    case actionTypes.HIDE_SOLVE_TIME_SET: {
+      return { ...state, hideSolveTime: action.payload.hideSolveTime };
     }
     default: {
       return state;

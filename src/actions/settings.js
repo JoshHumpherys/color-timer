@@ -11,3 +11,7 @@ export function setHoldTime(holdTime) {
 export function setDisplayMillis(displayMillis) {
   return { type: actionTypes.DISPLAY_MILLIS_SET, payload: { displayMillis } };
 }
+
+export function setHideSolveTime(hideSolveTime) {
+  return { type: actionTypes.HIDE_SOLVE_TIME_SET, payload: { hideSolveTime } };
+}
