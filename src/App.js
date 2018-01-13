@@ -23,7 +23,8 @@ import {
   getRunningStartTime,
   getSpacebarIsDown,
   getTimerJustStopped,
-  getTime
+  getTime,
+  getSolves
 } from './selectors/timer'
 import { getInspection, getHoldTimeType, getDisplayMillis, getHideSolveTime } from './selectors/settings'
 import { getModalType } from './selectors/modal'
@@ -284,9 +285,27 @@ class App extends Component {
           }>Settings</button>
         </header>
         <div className={'timer' + (this.isReady(now) ? ' ready' : '')}>
-          <p className={displayTimeDivClassName}>
-            {displayTime}
-          </p>
+          <div className="timer-times-container">
+            <table className="timer-times-table">
+              <tr>
+                <th>Solve</th>
+                <th>Time</th>
+              </tr>
+              {
+                this.props.solves.map((solve, i) => (
+                  <tr>
+                    <td>{i + 1}</td>
+                    <td>{this.getDisplayTime(solve.time)}</td>
+                  </tr>
+                ))
+              }
+            </table>
+          </div>
+          <div className="timer-text-container">
+            <p className={displayTimeDivClassName}>
+              {displayTime}
+            </p>
+          </div>
         </div>
 
         <Modal size='small' open={this.props.modalType !== null} onClose={() => this.props.dispatch(removeModal())}>
@@ -319,6 +338,7 @@ export default connect(
       spacebarIsDown: getSpacebarIsDown(state),
       timerJustStopped: getTimerJustStopped(state),
       time: getTime(state),
+      solves: getSolves(state),
       inspection: getInspection(state),
       holdTimeType,
       holdTime: holdTimes[holdTimeType],

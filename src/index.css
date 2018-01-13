@@ -41,6 +41,7 @@ body {
   color: white;
   display: flex;
   box-shadow: 0 4px 8px rgba(0, 0, 0, .3);
+  z-index: 1;
 }
 
 .scramble {
@@ -81,17 +82,35 @@ body {
 }
 
 .timer {
+  flex: 1;
+  transition: background-color .1s;
+  display: flex;
+}
+
+.timer-times-container {
+  flex: 1;
+  max-width: 300px;
+  background-color: dodgerblue;
+  box-shadow: 4px 0 8px rgba(0, 0, 0, .3);
+  overflow-y: auto;
+}
+
+.timer-times-table {
+  margin: 20px auto;
+}
+
+.timer-times-table th, .timer-times-table td {
+  color: #FFF;
+  padding: 5px 10px;
+}
+
+.timer-text-container {
   font-size: 30vw;
   font-family: digital-7-mono, monospace;
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  transition: background-color .1s;
 }
 
 .timer-text {

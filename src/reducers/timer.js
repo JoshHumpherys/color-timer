@@ -1,6 +1,8 @@
 import * as actionTypes from '../constants/actionTypes'
 import * as stateTypes from '../constants/stateTypes'
 import  Scrambo from 'scrambo'
+import Session from '../classes/Session'
+import Solve from '../classes/Solve'
 
 export default function timer(
   state = {
@@ -18,14 +20,18 @@ export default function timer(
       sq1: new Scrambo().type('sq1'),
       skewb: new Scrambo().type('skewb')
     },
-    scramble: new Scrambo().get(), // TODO don't make another Scrambo objects
+    scramble: new Scrambo().get(), // TODO don't make another Scrambo object
     state: stateTypes.IDLE,
     inspectionStartTime: null,
     holdingStartTime: null,
     runningStartTime: null,
     spacebarIsDown: false,
     timerJustStopped: false,
-    time: 0
+    time: 0,
+    sessions: [
+      new Session('Anonymous Session 1')
+    ],
+    currentSessionIndex: 0
   },
   action) {
   switch (action.type) {
@@ -57,13 +63,18 @@ export default function timer(
       };
     }
     case actionTypes.TIMER_STOPPED: {
+      const sessions = [...state.sessions];
+      const time = action.payload.runningStopTime - state.runningStartTime;
+      const solve = new Solve(state.scramble, time);
+      sessions[state.currentSessionIndex] = sessions[state.currentSessionIndex].addSolve(solve);
       return {
         ...state,
         state: stateTypes.IDLE,
         runningStartTime: null,
-        time: action.payload.runningStopTime - state.runningStartTime,
+        time,
         scramble: state.scrambos[state.type].get(),
-        timerJustStopped: true
+        timerJustStopped: true,
+        sessions
       };
     }
     case actionTypes.SPACEBAR_IS_DOWN_SET: {
