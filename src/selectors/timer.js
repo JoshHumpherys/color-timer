@@ -11,11 +11,31 @@ export const getTime = state => state.timer.time;
 
 export const getSolveStats = state => {
   const solves = state.timer.sessions[state.timer.currentSessionIndex].solves;
+  const bests = {
+    single: undefined,
+    mo3: undefined,
+    ao5: undefined,
+    ao12: undefined,
+    ao50: undefined,
+    ao100: undefined
+  };
 
-  const getLastNSolveTimesSorted = (i, n) => solves
-    .slice(i - (n - 1), i + 1)
-    .map(solve => solve.time)
-    .sort((a, b) => a - b);
+  const getLastNTimes = (i, n) => solves.slice(i - (n - 1), i + 1).map(solve => solve.time);
+
+  const getLastNTimesSorted = (i, n) => getLastNTimes(i, n).sort((a, b) => a - b);
+
+  const getMeanOfN = times => times.reduce((sum, time) => sum + time, 0) / times.length;
+
+  const calculateMoN = n => {
+    let best = undefined;
+    for(let i = n - 1; i < solves.length; i++) {
+      const mean = getMeanOfN(getLastNTimes(i, n));
+      solves[i]['mo' + n] = mean;
+      if(best === undefined || mean < best) {
+        bests['mo' + n] = best = mean;
+      }
+    }
+  };
 
   const getAverageOfNFromSortedTimes = sortedTimes => {
     const numToThrowOut = Math.floor(sortedTimes.length / 5);
@@ -25,23 +45,30 @@ export const getSolveStats = state => {
   };
 
   const calculateAoN = n => {
+    let best = undefined;
     for(let i = n - 1; i < solves.length; i++) {
-      solves[i]['ao' + n] = getAverageOfNFromSortedTimes(getLastNSolveTimesSorted(i, n));
+      const avg = getAverageOfNFromSortedTimes(getLastNTimesSorted(i, n));
+      solves[i]['ao' + n] = avg;
+      if(best === undefined || avg < best) {
+        bests['ao' + n] = best = avg;
+      }
     }
   };
-
-  calculateAoN(5);
-  calculateAoN(12);
 
   const times = solves.map(solve => solve.time);
   const sortedTimes = times.sort((a, b) => a - b);
 
+  bests.single = times.length > 0 ? Math.min(...times) : undefined;
+  calculateMoN(3);
+  calculateAoN(5);
+  calculateAoN(12);
+  calculateAoN(50);
+  calculateAoN(100);
+
   const mean = times.length > 0 ? times.reduce((sum, time) => sum + time, 0) / times.length : NaN;
   const avg = sortedTimes.length > 0 ? getAverageOfNFromSortedTimes(sortedTimes) : NaN;
-  console.log(times);
   const sumOfPowers = times.reduce((sum, time) => sum + Math.pow(time - mean, 2), 0);
-  console.log(sumOfPowers);
   const std = Math.sqrt(sumOfPowers / (times.length - 1));
 
-  return { solves, mean, avg, std };
+  return { bests, solves, mean, avg, std };
 };

@@ -89,6 +89,7 @@ class App extends Component {
   }
 
   getDisplayTime(timeMillis) {
+    if(timeMillis === undefined) return '';
     const millis = timeMillis % 1000;
     const secs = Math.floor(timeMillis / 1000) % 60;
     const mins = Math.floor(timeMillis / 1000 / 60) % 60;
@@ -286,6 +287,30 @@ class App extends Component {
         </header>
         <div className={'timer' + (this.isReady(now) ? ' ready' : '')}>
           <div className="timer-times-container">
+            <table className="timer-times-table">
+              <tr>
+                <th />
+                <th>Current</th>
+                <th>Best</th>
+              </tr>
+              {
+                Object.entries(this.props.bests).map(([ name, time ]) => (
+                  <tr>
+                    <td>{name}</td>
+                    <td>
+                      {
+                        this.props.solves.length > 0 ?
+                          this.getDisplayTime(
+                            this.props.solves[this.props.solves.length - 1][name === 'single' ? 'time' : name]
+                          ) :
+                          ''
+                      }
+                    </td>
+                    <td>{time ? this.getDisplayTime(time) : ''}</td>
+                  </tr>
+                ))
+              }
+            </table>
             <h4 className="timer-times-mean">
               Mean: {this.props.mean ? this.getDisplayTime(this.props.mean) : ''}
             </h4>
@@ -352,6 +377,7 @@ export default connect(
       spacebarIsDown: getSpacebarIsDown(state),
       timerJustStopped: getTimerJustStopped(state),
       time: getTime(state),
+      bests: solveStats.bests,
       solves: solveStats.solves,
       mean: solveStats.mean,
       avg: solveStats.avg,
