@@ -38,7 +38,7 @@ export const getSolveStats = state => {
   };
 
   const getAverageOfNFromSortedTimes = sortedTimes => {
-    const numToThrowOut = Math.floor(sortedTimes.length / 5);
+    const numToThrowOut = Math.ceil(sortedTimes.length / 20);
     const timesToMean = sortedTimes.slice(numToThrowOut, sortedTimes.length - numToThrowOut);
     const sumOfTimesToMean = timesToMean.reduce((sum, time) => sum + time, 0);
     return sumOfTimesToMean / timesToMean.length;
