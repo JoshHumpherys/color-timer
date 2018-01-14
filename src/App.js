@@ -24,7 +24,7 @@ import {
   getSpacebarIsDown,
   getTimerJustStopped,
   getTime,
-  getSolves
+  getSolveStats
 } from './selectors/timer'
 import { getInspection, getHoldTimeType, getDisplayMillis, getHideSolveTime } from './selectors/settings'
 import { getModalType } from './selectors/modal'
@@ -286,6 +286,15 @@ class App extends Component {
         </header>
         <div className={'timer' + (this.isReady(now) ? ' ready' : '')}>
           <div className="timer-times-container">
+            <h4 className="timer-times-mean">
+              Mean: {this.props.mean ? this.getDisplayTime(this.props.mean) : ''}
+            </h4>
+            <h4 className="timer-times-avg">
+              Average: {this.props.avg ? this.getDisplayTime(this.props.avg) : '' }
+            </h4>
+            <h4 className="timer-times-avg">
+              Standard Deviation: {this.props.std ? this.getDisplayTime(this.props.std) : '' }
+            </h4>
             <table className="timer-times-table">
               <tr>
                 <th>Solve</th>
@@ -331,6 +340,7 @@ class App extends Component {
 export default connect(
   state => {
     const holdTimeType = getHoldTimeType(state);
+    const solveStats = getSolveStats(state);
     return {
       type: getType(state),
       scrambo: getScrambo(state),
@@ -342,7 +352,10 @@ export default connect(
       spacebarIsDown: getSpacebarIsDown(state),
       timerJustStopped: getTimerJustStopped(state),
       time: getTime(state),
-      solves: getSolves(state),
+      solves: solveStats.solves,
+      mean: solveStats.mean,
+      avg: solveStats.avg,
+      std: solveStats.std,
       inspection: getInspection(state),
       holdTimeType,
       holdTime: holdTimes[holdTimeType],

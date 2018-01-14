@@ -45,7 +45,7 @@ body {
 }
 
 .scramble {
-  font-size: 1.5em;
+  font-size: 2em;
   flex: 1;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -93,6 +93,17 @@ body {
   background-color: dodgerblue;
   box-shadow: 4px 0 8px rgba(0, 0, 0, .3);
   overflow-y: auto;
+  color: #FFF;
+}
+
+h4.timer-times-mean {
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+
+h4.timer-times-avg {
+  margin-top: 0;
+  margin-bottom: 5px;
 }
 
 .timer-times-table {
@@ -100,7 +111,6 @@ body {
 }
 
 .timer-times-table th, .timer-times-table td {
-  color: #FFF;
   padding: 5px 10px;
 }
 

@@ -9,7 +9,7 @@ export const getSpacebarIsDown = state => state.timer.spacebarIsDown;
 export const getTimerJustStopped = state => state.timer.timerJustStopped;
 export const getTime = state => state.timer.time;
 
-export const getSolves = state => {
+export const getSolveStats = state => {
   const solves = state.timer.sessions[state.timer.currentSessionIndex].solves;
 
   const getLastNSolveTimesSorted = (i, n) => solves
@@ -33,5 +33,15 @@ export const getSolves = state => {
   calculateAoN(5);
   calculateAoN(12);
 
-  return solves;
+  const times = solves.map(solve => solve.time);
+  const sortedTimes = times.sort((a, b) => a - b);
+
+  const mean = times.length > 0 ? times.reduce((sum, time) => sum + time, 0) / times.length : NaN;
+  const avg = sortedTimes.length > 0 ? getAverageOfNFromSortedTimes(sortedTimes) : NaN;
+  console.log(times);
+  const sumOfPowers = times.reduce((sum, time) => sum + Math.pow(time - mean, 2), 0);
+  console.log(sumOfPowers);
+  const std = Math.sqrt(sumOfPowers / (times.length - 1));
+
+  return { solves, mean, avg, std };
 };
