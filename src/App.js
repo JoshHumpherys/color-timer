@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Button, Checkbox, Dropdown, Modal } from 'semantic-ui-react'
+import { Button, Checkbox, Dropdown, Form, Modal } from 'semantic-ui-react'
 import {
   setType,
   generateScramble,
@@ -9,7 +9,9 @@ import {
   stopHolding,
   startTimer,
   stopTimer,
-  setSpacebarIsDown
+  setSpacebarIsDown,
+  createSession,
+  switchSession
 } from './actions/timer'
 import { setDisplayMillis, setInspection, setHideSolveTime, setHoldTime } from './actions/settings'
 import { createModal, removeModal } from './actions/modal'
@@ -24,6 +26,8 @@ import {
   getSpacebarIsDown,
   getTimerJustStopped,
   getTime,
+  getSessions,
+  getCurrentSessionIndex,
   getSolveStats
 } from './selectors/timer'
 import { getInspection, getHoldTimeType, getDisplayMillis, getHideSolveTime } from './selectors/settings'
@@ -77,6 +81,7 @@ class App extends Component {
     this.generateScramble = this.generateScramble.bind(this);
     this.getDisplayTime = this.getDisplayTime.bind(this);
     this.isReady = this.isReady.bind(this);
+    this.createSession = this.createSession.bind(this);
   }
 
   setType(type) {
@@ -107,6 +112,10 @@ class App extends Component {
 
   isReady(now) {
     return this.props.holdingStartTime !== null && now - this.props.holdingStartTime >= this.props.holdTime * 1000;
+  }
+
+  createSession() {
+    this.props.dispatch(createSession(this.newSessionInputField.value));
   }
 
   componentDidMount() {
@@ -205,6 +214,7 @@ class App extends Component {
       displayTimeDivClassName += ' timer-text-medium';
     }
 
+    // TODO move this to another file?
     let modalContents;
     switch(this.props.modalType) {
       case modalTypes.SETTINGS_MODAL:
@@ -261,6 +271,47 @@ class App extends Component {
           actions: <SubmitButton onClick={() => this.props.dispatch(removeModal())} />
         };
         break;
+      case modalTypes.SESSIONS_MODAL:
+        modalContents = {
+          header: 'Sessions',
+          body: (
+            <div>
+              <div>
+                <h4>Create Session</h4>
+                <div className="field">
+                  <div className="ui input">
+                    <input
+                      ref={input => this.newSessionInputField = input}
+                      type="text"
+                      placeholder="Enter new session name"
+                      autoComplete="off"
+                      onKeyDown={e => {
+                        if(e.keyCode === 13) {
+                          this.createSession();
+                        }
+                      }}
+                      autoFocus />
+                  </div>
+                  <button className="ui button" role="button"onClick={this.createSession}>Create Session</button>
+                </div>
+              </div>
+              <br />
+              <div>
+                <h4>Current Session</h4>
+                <Dropdown
+                  key={'session dropdown' + this.props.currentSessionIndex} // TODO find a better way to update default
+                  defaultValue={this.props.currentSessionIndex}
+                  fluid
+                  selection
+                  options={this.props.sessions.map((session, i) => ({ text: session.name, value: i }))}
+                  onChange={(e, data) => this.props.dispatch(switchSession(data.value))}
+                />
+              </div>
+            </div>
+          ),
+          actions: <SubmitButton onClick={() => this.props.dispatch(removeModal())} />
+        };
+        break;
       default:
         modalContents = { header: null, body: null, actions: null };
     }
@@ -281,6 +332,9 @@ class App extends Component {
             Next
           </button>
           <h1 className="scramble">{this.props.scramble}</h1>
+          <button className="header-button centered-text" onClick={
+            () => this.props.dispatch(createModal(modalTypes.SESSIONS_MODAL))
+          }>Sessions</button>
           <button className="header-button centered-text" onClick={
             () => this.props.dispatch(createModal(modalTypes.SETTINGS_MODAL))
           }>Settings</button>
@@ -377,6 +431,8 @@ export default connect(
       spacebarIsDown: getSpacebarIsDown(state),
       timerJustStopped: getTimerJustStopped(state),
       time: getTime(state),
+      sessions: getSessions(state),
+      currentSessionIndex: getCurrentSessionIndex(state),
       bests: solveStats.bests,
       solves: solveStats.solves,
       mean: solveStats.mean,

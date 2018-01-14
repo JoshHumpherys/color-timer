@@ -35,3 +35,11 @@ export function stopTimer(runningStopTime) {
 export function setSpacebarIsDown(spacebarIsDown) {
   return { type: actionTypes.SPACEBAR_IS_DOWN_SET, payload: { spacebarIsDown } };
 }
+
+export function createSession(name) {
+  return { type: actionTypes.SESSION_CREATED, payload: { name } };
+}
+
+export function switchSession(index) {
+  return { type: actionTypes.SESSION_SWITCHED, payload: { index } };
+}

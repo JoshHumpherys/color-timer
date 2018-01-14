@@ -152,3 +152,7 @@ h4.timer-times-avg {
 ::-webkit-scrollbar-thumb:hover {
   background: #00afef; /* deepskyblue is #00bfff */
 }
+
+.field > *:not(:last-child) {
+  margin-right: 15px;
+}

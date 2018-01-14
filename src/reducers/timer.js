@@ -81,6 +81,18 @@ export default function timer(
       const { spacebarIsDown } = action.payload;
       return { ...state, spacebarIsDown, timerJustStopped: state.timerJustStopped && !spacebarIsDown };
     }
+    case actionTypes.SESSION_CREATED: {
+      const { name } = action.payload;
+      const newName = name || 'Anonymous Session ' + state.sessions.length + 1;
+      return {
+        ...state,
+        sessions: [...state.sessions, new Session(newName)],
+        currentSessionIndex: state.sessions.length
+      };
+    }
+    case actionTypes.SESSION_SWITCHED: {
+      return { ...state, currentSessionIndex: action.payload.index };
+    }
     default: {
       return state;
     }
