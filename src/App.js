@@ -290,14 +290,18 @@ class App extends Component {
               <tr>
                 <th>Solve</th>
                 <th>Time</th>
+                <th>Ao5</th>
+                <th>Ao12</th>
               </tr>
               {
                 this.props.solves.map((solve, i) => (
                   <tr>
                     <td>{i + 1}</td>
                     <td>{this.getDisplayTime(solve.time)}</td>
+                    <td>{solve.ao5 ? this.getDisplayTime(solve.ao5) : ''}</td>
+                    <td>{solve.ao12 ? this.getDisplayTime(solve.ao12) : ''}</td>
                   </tr>
-                ))
+                )).reverse()
               }
             </table>
           </div>
