@@ -294,7 +294,7 @@ class App extends Component {
                 <th>Best</th>
               </tr>
               {
-                Object.entries(this.props.bests).map(([ name, time ]) => (
+                Object.entries(this.props.bests).filter(([ _, time]) => time).map(([ name, time ]) => (
                   <tr>
                     <td>{name}</td>
                     <td>

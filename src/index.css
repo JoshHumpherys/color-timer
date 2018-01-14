@@ -47,10 +47,6 @@ body {
 .scramble {
   font-size: 2em;
   flex: 1;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 }
 
 .header-button {
@@ -137,4 +133,22 @@ h4.timer-times-avg {
 
 .timer-text-smallest {
   font-size: 15vw;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px gray;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: deepskyblue;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00afef; /* deepskyblue is #00bfff */
 }
