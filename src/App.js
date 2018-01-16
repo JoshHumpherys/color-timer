@@ -5,6 +5,7 @@ import {
   setType,
   generateScramble,
   startInspection,
+  setPenaltyType,
   startHolding,
   stopHolding,
   startTimer,
@@ -25,7 +26,8 @@ import {
   getRunningStartTime,
   getSpacebarIsDown,
   getTimerJustStopped,
-  getTime,
+  getTimeObj,
+  getPenaltyType,
   getSessions,
   getCurrentSessionIndex,
   getSolveStats
@@ -34,6 +36,7 @@ import { getInspection, getHoldTimeType, getDisplayMillis, getHideSolveTime } fr
 import { getModalType } from './selectors/modal'
 import * as stateTypes from './constants/stateTypes'
 import * as holdTimeTypes from './constants/holdTimeTypes'
+import * as penaltyTypes from './constants/penaltyTypes'
 import * as modalTypes from './constants/modalTypes'
 
 // TODO move these to a constants file?
@@ -93,8 +96,10 @@ class App extends Component {
     this.props.dispatch(generateScramble(type));
   }
 
-  getDisplayTime(timeMillis) {
+  getDisplayTime(timeMillis, penaltyType = penaltyTypes.NONE) {
     if(timeMillis === undefined) return '';
+    if(isNaN(timeMillis)) return '';
+    if(penaltyType === penaltyTypes.DNF) return 'DNF';
     const millis = timeMillis % 1000;
     const secs = Math.floor(timeMillis / 1000) % 60;
     const mins = Math.floor(timeMillis / 1000 / 60) % 60;
@@ -106,8 +111,33 @@ class App extends Component {
       (mins !== 0 || hrs !== 0 ? (hrs !== 0 ? getComponent(mins) : mins) + ':' : '') +
       (secs !== 0 || mins !== 0 || hrs !== 0 ? (mins !== 0 || hrs !== 0 ? getComponent(secs) : secs) + '.' : '') +
       (secs === 0 && mins === 0 && hrs === 0 ? '0.' : '') +
-      millisString.toString().slice(0, this.props.displayMillis ? 3 : 2)
+      millisString.toString().slice(0, this.props.displayMillis ? 3 : 2) +
+      (penaltyType === penaltyTypes.PLUS_TWO ? '+' : '')
     );
+  }
+
+  static getPenaltyType(timeMillis) {
+    if(timeMillis > 0) {
+      return penaltyTypes.NONE;
+    } else if(timeMillis > -2) {
+      return penaltyTypes.PLUS_TWO;
+    } else {
+      return penaltyTypes.DNF;
+    }
+  }
+
+  static getInspectionDisplayTime(inspectionTimeRemaining, penaltyType) {
+    switch(penaltyType) {
+      case penaltyTypes.NONE:
+        return inspectionTimeRemaining.toString();
+        break;
+      case penaltyTypes.PLUS_TWO:
+        return '+2';
+        break;
+      case penaltyTypes.DNF:
+        return 'DNF';
+        break;
+    }
   }
 
   isReady(now) {
@@ -173,8 +203,19 @@ class App extends Component {
           break;
       }
     }
-    if(this.props.state === stateTypes.INSPECTION) {
-      // TODO handle +2 and DNF during inspection
+    if(this.props.state === stateTypes.INSPECTION || this.props.state === stateTypes.READY) {
+      const inspectionTimeRemaining = Math.ceil(15 - (now - this.props.inspectionStartTime) / 1000);
+      const penaltyType = App.getPenaltyType(inspectionTimeRemaining);
+      if(penaltyType !== this.props.penaltyType) {
+        switch (penaltyType) {
+          case penaltyTypes.NONE:
+            break;
+          case penaltyTypes.PLUS_TWO:
+          case penaltyTypes.DNF:
+            this.props.dispatch(setPenaltyType(penaltyType));
+            break;
+        }
+      }
     }
   }
 
@@ -183,18 +224,12 @@ class App extends Component {
     let displayTime;
     switch(this.props.state) {
       case stateTypes.IDLE:
-        displayTime = this.getDisplayTime(this.props.time);
+        displayTime = this.getDisplayTime(this.props.timeObj.timeMillis, this.props.timeObj.dnf);
         break;
       case stateTypes.INSPECTION:
         const inspectionTimeRemaining = Math.ceil(15 - (now - this.props.inspectionStartTime) / 1000);
-        console.log(this.props.inspectionStartTime);
-        if(inspectionTimeRemaining > 0) {
-          displayTime = inspectionTimeRemaining.toString();
-        } else if(inspectionTimeRemaining > -2) {
-          displayTime = '+2';
-        } else {
-          displayTime = 'DNF';
-        }
+        const penaltyType = App.getPenaltyType(inspectionTimeRemaining);
+        displayTime = App.getInspectionDisplayTime(inspectionTimeRemaining, penaltyType);
         break;
       case stateTypes.RUNNING:
         if(this.props.hideSolveTime) {
@@ -316,6 +351,23 @@ class App extends Component {
         modalContents = { header: null, body: null, actions: null };
     }
 
+    const dnfBoolToPenatlyType = dnf => dnf === penaltyTypes.DNF ? penaltyTypes.DNF : penaltyTypes.NONE;
+
+    const getCurrentStat = type => {
+      if(this.props.timeObjs.length > 0) {
+        const currentTimeObj = this.props.timeObjs[this.props.timeObjs.length - 1];
+        if(type === 'single') {
+          return this.getDisplayTime(currentTimeObj.timeMillis, currentTimeObj.penaltyType);
+        } else if(currentTimeObj[type]) {
+          return this.getDisplayTime(currentTimeObj[type].timeMillis, currentTimeObj[type].penaltyType);
+        } else {
+          return '';
+        }
+      } else {
+        return ''
+      }
+    };
+
     return (
       <div className="app">
         <header className="header">
@@ -348,31 +400,35 @@ class App extends Component {
                 <th>Best</th>
               </tr>
               {
-                Object.entries(this.props.bests).filter(([ _, time]) => time).map(([ name, time ]) => (
+                Object.entries(this.props.bests).filter(([ _, timeObj]) => timeObj).map(([ type, timeObj ]) => (
                   <tr>
-                    <td>{name}</td>
                     <td>
-                      {
-                        this.props.solves.length > 0 ?
-                          this.getDisplayTime(
-                            this.props.solves[this.props.solves.length - 1][name === 'single' ? 'time' : name]
-                          ) :
-                          ''
-                      }
+                      {type}
                     </td>
-                    <td>{time ? this.getDisplayTime(time) : ''}</td>
+                    <td>
+                      {getCurrentStat(type)}
+                    </td>
+                    <td>
+                      {timeObj ? this.getDisplayTime(timeObj.timeMillis, timeObj.penaltyType) : ''}
+                    </td>
                   </tr>
                 ))
               }
             </table>
             <h4 className="timer-times-mean">
-              Mean: {this.props.mean ? this.getDisplayTime(this.props.mean) : ''}
+              Mean: {
+                this.props.mean ? this.getDisplayTime(this.props.mean.timeMillis, this.props.mean.penaltyType) : ''
+              }
             </h4>
             <h4 className="timer-times-avg">
-              Average: {this.props.avg ? this.getDisplayTime(this.props.avg) : '' }
+              Average: {
+                this.props.avg ? this.getDisplayTime(this.props.avg.timeMillis, this.props.avg.penaltyType) : ''
+              }
             </h4>
             <h4 className="timer-times-avg">
-              Standard Deviation: {this.props.std ? this.getDisplayTime(this.props.std) : '' }
+              Standard Deviation: {
+                this.props.std ? this.getDisplayTime(this.props.std.timeMillis, this.props.std.penaltyType) : ''
+            }
             </h4>
             <table className="timer-times-table">
               <tr>
@@ -382,12 +438,25 @@ class App extends Component {
                 <th>Ao12</th>
               </tr>
               {
-                this.props.solves.map((solve, i) => (
+                this.props.timeObjs.map((timeObj, i) => (
                   <tr>
-                    <td>{i + 1}</td>
-                    <td>{this.getDisplayTime(solve.time)}</td>
-                    <td>{solve.ao5 ? this.getDisplayTime(solve.ao5) : ''}</td>
-                    <td>{solve.ao12 ? this.getDisplayTime(solve.ao12) : ''}</td>
+                    <td>
+                      {i + 1}
+                    </td>
+                    <td>
+                      {this.getDisplayTime(timeObj.timeMillis, timeObj.penaltyType)}
+                    </td>
+                    <td>
+                      {timeObj.ao5 ? this.getDisplayTime(timeObj.ao5.timeMillis, timeObj.ao5.penaltyType) : ''}
+                    </td>
+                    <td>
+                      {
+                        timeObj.ao12 ? this.getDisplayTime(
+                          timeObj.ao12.timeMillis,
+                          timeObj.ao12.penaltyType
+                        ) : ''
+                      }
+                    </td>
                   </tr>
                 )).reverse()
               }
@@ -430,11 +499,12 @@ export default connect(
       runningStartTime: getRunningStartTime(state),
       spacebarIsDown: getSpacebarIsDown(state),
       timerJustStopped: getTimerJustStopped(state),
-      time: getTime(state),
+      timeObj: getTimeObj(state),
+      penaltyType: getPenaltyType(state),
       sessions: getSessions(state),
       currentSessionIndex: getCurrentSessionIndex(state),
       bests: solveStats.bests,
-      solves: solveStats.solves,
+      timeObjs: solveStats.timeObjs,
       mean: solveStats.mean,
       avg: solveStats.avg,
       std: solveStats.std,

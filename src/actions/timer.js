@@ -8,12 +8,16 @@ export function generateScramble(type) {
   return { type: actionTypes.SCRAMBLE_GENERATED, payload: { type } };
 }
 
-export function setState(state) {
+export function setState(state) { // TODO rename this to setTimerState
   return { type: actionTypes.STATE_SET, payload: { state } };
 }
 
 export function startInspection(inspectionStartTime) {
   return { type: actionTypes.INSPECTION_STARTED, payload: { inspectionStartTime } };
+}
+
+export function setPenaltyType(penaltyType) {
+  return { type: actionTypes.PENALTY_SET, payload: { penaltyType } };
 }
 
 export function startHolding(holdingStartTime) {

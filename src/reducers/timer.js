@@ -3,6 +3,8 @@ import * as stateTypes from '../constants/stateTypes'
 import  Scrambo from 'scrambo'
 import Session from '../classes/Session'
 import Solve from '../classes/Solve'
+import Time from '../classes/Time'
+import * as penaltyTypes from '../constants/penaltyTypes'
 
 export default function timer(
   state = {
@@ -27,7 +29,8 @@ export default function timer(
     runningStartTime: null,
     spacebarIsDown: false,
     timerJustStopped: false,
-    time: 0,
+    timeObj: new Time(0),
+    penaltyType: penaltyTypes.NONE,
     sessions: [
       new Session('Anonymous Session 1')
     ],
@@ -41,14 +44,30 @@ export default function timer(
     case actionTypes.SCRAMBLE_GENERATED: {
       return { ...state, scramble: state.scrambos[action.payload.type].get() };
     }
-    case actionTypes.STATE_SET: {
-      return { ...state, state: action.payload.state };
-    }
     case actionTypes.INSPECTION_STARTED: {
-      return { ...state, state: stateTypes.INSPECTION, inspectionStartTime: action.payload.inspectionStartTime };
+      let { timeObj, penaltyType } = state;
+      if(state.state === stateTypes.IDLE) {
+        timeObj = new Time(0);
+        penaltyType = penaltyTypes.NONE;
+      }
+      return {
+        ...state,
+        state: stateTypes.INSPECTION,
+        inspectionStartTime: action.payload.inspectionStartTime,
+        timeObj,
+        penaltyType
+      };
+    }
+    case actionTypes.PENALTY_SET: {
+      return { ...state, penaltyType: action.payload.penaltyType };
     }
     case actionTypes.HOLDING_STARTED: {
-      return { ...state, holdingStartTime: action.payload.holdingStartTime };
+      let { timeObj, penaltyType } = state;
+      if(state.state === stateTypes.IDLE) {
+        timeObj = new Time(0);
+        penaltyType = penaltyTypes.NONE;
+      }
+      return { ...state, holdingStartTime: action.payload.holdingStartTime, timeObj, penaltyType };
     }
     case actionTypes.HOLDING_STOPPED: {
       return { ...state, holdingStartTime: null };
@@ -64,14 +83,18 @@ export default function timer(
     }
     case actionTypes.TIMER_STOPPED: {
       const sessions = [...state.sessions];
-      const time = action.payload.runningStopTime - state.runningStartTime;
-      const solve = new Solve(state.scramble, time);
+      const timeObj = new Time(
+        action.payload.runningStopTime - state.runningStartTime +
+          (state.penaltyType === penaltyTypes.PLUS_TWO ? 2000 : 0),
+        state.penaltyType
+      );
+      const solve = new Solve(state.scramble, timeObj, state.penaltyType);
       sessions[state.currentSessionIndex] = sessions[state.currentSessionIndex].addSolve(solve);
       return {
         ...state,
         state: stateTypes.IDLE,
         runningStartTime: null,
-        time,
+        timeObj,
         scramble: state.scrambos[state.type].get(),
         timerJustStopped: true,
         sessions
