@@ -151,9 +151,10 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const sessionsJson = localStorage.getItem('sessions');
-    const sessions = sessionsJson ? JSON.parse(sessionsJson) : {};
-    this.props.dispatch(setSessions(sessions));
+    const sessions = localStorage.getItem('sessions');
+    if(sessions) {
+      this.props.dispatch(setSessions(JSON.parse(sessions)));
+    }
     document.addEventListener('keydown', e => {
       if(e.keyCode === 32 && !this.props.spacebarIsDown) {
         this.props.dispatch(setSpacebarIsDown(true));

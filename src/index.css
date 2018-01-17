@@ -121,6 +121,7 @@ h4.timer-times-avg {
 
 .timer-text {
   margin-top: calc(20%); /* TODO figure out why the text baseline is off */
+  height: 100%;
 }
 
 .timer-text-medium {
