@@ -16,8 +16,8 @@ export const getSessions = state => state.timer.sessions;
 export const getCurrentSessionIndex = state => state.timer.currentSessionIndex;
 
 export const getSolveStats = state => {
-  const timeObjs = [...state.timer.sessions[state.timer.currentSessionIndex].timeObjs.map(solve => solve.timeObj)]
-    .map((timeObj, i) => ({ ...timeObj, solveNumber: i }));
+  const solves = [...state.timer.sessions[state.timer.currentSessionIndex].solves];
+  const timeObjs = solves.map((solve, i) => ({ ...solve.timeObj, solveNumber: i }));
 
   const bests = {
     single: undefined,
@@ -57,19 +57,18 @@ export const getSolveStats = state => {
   const calculateMoN = n => {
     let best = undefined;
     for(let i = n - 1; i < timeObjs.length; i++) {
-      const lastNTimeObjs = getLastNTimeObjs(timeObjs.length - 1, n);
+      const lastNTimeObjs = getLastNTimeObjs(i, n);
       if(lastNTimeObjs.some(timeObj => timeObj.penaltyType === penaltyTypes.DNF)) {
         timeObjs[i]['mo' + n] = new Time(0, penaltyTypes.DNF);
         if(best === undefined) {
-          bests['mo' + n] = timeObjs[i]['mo' + n];
+          bests['mo' + n] = best = timeObjs[i]['mo' + n];
         }
       } else {
         const lastNTimes = lastNTimeObjs.map(timeObj => timeObj.timeMillis);
         const mean = getMeanOfN(lastNTimes);
         timeObjs[i]['mo' + n] = new Time(mean, penaltyTypes.NONE);
-        if(best === undefined || best.penaltyType === penaltyTypes.DNF || mean < best) {
-          best = mean;
-          bests['mo' + n] = timeObjs[i]['mo' + n];
+        if(best === undefined || best.penaltyType === penaltyTypes.DNF || mean < best.timeMillis) {
+          bests['mo' + n] = best = timeObjs[i]['mo' + n];
         }
       }
     }
@@ -120,5 +119,9 @@ export const getSolveStats = state => {
   const std = sumOfPowers === 0.0 ? NaN :
     new Time(Math.sqrt(sumOfPowers / (timesWithoutDnfs.length - 1)), penaltyTypes.NONE);
 
-  return { bests, timeObjs: timeObjs.sort((a, b) => a.solveNumber - b.solveNumber), mean, avg, std };
+  timeObjs
+    .sort((a, b) => a.solveNumber - b.solveNumber)
+    .forEach((timeObj, i) => solves[i].timeObj = timeObj);
+
+  return { bests, solves, mean, avg, std };
 };

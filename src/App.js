@@ -15,7 +15,7 @@ import {
   switchSession
 } from './actions/timer'
 import { setDisplayMillis, setInspection, setHideSolveTime, setHoldTime } from './actions/settings'
-import { createModal, removeModal } from './actions/modal'
+import {createModal, removeModal, setModalState} from './actions/modal'
 import {
   getType,
   getScrambo,
@@ -33,7 +33,7 @@ import {
   getSolveStats
 } from './selectors/timer'
 import { getInspection, getHoldTimeType, getDisplayMillis, getHideSolveTime } from './selectors/settings'
-import { getModalType } from './selectors/modal'
+import { getModalType, getModalState } from './selectors/modal'
 import * as stateTypes from './constants/stateTypes'
 import * as holdTimeTypes from './constants/holdTimeTypes'
 import * as penaltyTypes from './constants/penaltyTypes'
@@ -70,7 +70,7 @@ class SubmitButton extends Component {
         positive
         icon="checkmark"
         labelPosition="right"
-        content="Submit"
+        content={this.props.text || 'Submit'}
         onClick={this.props.onClick} />
     );
   }
@@ -347,15 +347,34 @@ class App extends Component {
           actions: <SubmitButton onClick={() => this.props.dispatch(removeModal())} />
         };
         break;
+      case modalTypes.SOLVE_MODAL:
+        console.log(this.props.solves);
+        console.log(this.props.modalState.solveNumber);
+        modalContents = {
+          header: 'Solve #' + (this.props.modalState.solveNumber + 1),
+          body: (
+            <div>
+              <div>
+                <h4>Scramble</h4>
+                <div>
+                  {
+                    this.props.modalState.solveNumber !== undefined ?
+                      this.props.solves[this.props.modalState.solveNumber].scramble : ''
+                  }
+                </div>
+              </div>
+            </div>
+          ),
+          actions: <SubmitButton text="Done" onClick={() => this.props.dispatch(removeModal())} />
+        };
+        break;
       default:
         modalContents = { header: null, body: null, actions: null };
     }
 
-    const dnfBoolToPenatlyType = dnf => dnf === penaltyTypes.DNF ? penaltyTypes.DNF : penaltyTypes.NONE;
-
     const getCurrentStat = type => {
-      if(this.props.timeObjs.length > 0) {
-        const currentTimeObj = this.props.timeObjs[this.props.timeObjs.length - 1];
+      if(this.props.solves.length > 0) {
+        const currentTimeObj = this.props.solves[this.props.solves.length - 1].timeObj;
         if(type === 'single') {
           return this.getDisplayTime(currentTimeObj.timeMillis, currentTimeObj.penaltyType);
         } else if(currentTimeObj[type]) {
@@ -438,22 +457,30 @@ class App extends Component {
                 <th>Ao12</th>
               </tr>
               {
-                this.props.timeObjs.map((timeObj, i) => (
+                this.props.solves.map((solve, i) => (
                   <tr>
                     <td>
-                      {i + 1}
+                      <span className="solve-number" onClick={() => {
+                        this.props.dispatch(createModal(modalTypes.SOLVE_MODAL));
+                        this.props.dispatch(setModalState({ solveNumber: i }));
+                      }}>
+                        {i + 1}
+                      </span>
                     </td>
                     <td>
-                      {this.getDisplayTime(timeObj.timeMillis, timeObj.penaltyType)}
-                    </td>
-                    <td>
-                      {timeObj.ao5 ? this.getDisplayTime(timeObj.ao5.timeMillis, timeObj.ao5.penaltyType) : ''}
+                      {this.getDisplayTime(solve.timeObj.timeMillis, solve.penaltyType)}
                     </td>
                     <td>
                       {
-                        timeObj.ao12 ? this.getDisplayTime(
-                          timeObj.ao12.timeMillis,
-                          timeObj.ao12.penaltyType
+                        solve.timeObj.ao5 ?
+                          this.getDisplayTime(solve.timeObj.ao5.timeMillis, solve.timeObj.ao5.penaltyType) : ''
+                      }
+                    </td>
+                    <td>
+                      {
+                        solve.timeObj.ao12 ? this.getDisplayTime(
+                          solve.timeObj.ao12.timeMillis,
+                          solve.timeObj.ao12.penaltyType
                         ) : ''
                       }
                     </td>
@@ -504,7 +531,7 @@ export default connect(
       sessions: getSessions(state),
       currentSessionIndex: getCurrentSessionIndex(state),
       bests: solveStats.bests,
-      timeObjs: solveStats.timeObjs,
+      solves: solveStats.solves,
       mean: solveStats.mean,
       avg: solveStats.avg,
       std: solveStats.std,
@@ -513,7 +540,8 @@ export default connect(
       holdTime: holdTimes[holdTimeType],
       displayMillis: getDisplayMillis(state),
       hideSolveTime: getHideSolveTime(state),
-      modalType: getModalType(state)
+      modalType: getModalType(state),
+      modalState: getModalState(state)
     };
   }
 )(App);

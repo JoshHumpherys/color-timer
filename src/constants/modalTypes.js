@@ -1,2 +1,3 @@
 export const SETTINGS_MODAL = 'SETTINGS_MODAL';
 export const SESSIONS_MODAL = 'SESSIONS_MODAL';
+export const SOLVE_MODAL = 'SOLVE_MODAL';

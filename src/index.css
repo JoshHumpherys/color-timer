@@ -156,3 +156,8 @@ h4.timer-times-avg {
 .field > *:not(:last-child) {
   margin-right: 15px;
 }
+
+.solve-number {
+  cursor: pointer;
+  text-decoration: underline;
+}

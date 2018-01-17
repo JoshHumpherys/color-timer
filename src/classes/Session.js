@@ -1,10 +1,10 @@
 export default class Session {
   constructor(name, solves = []) {
     this.name = name;
-    this.timeObjs = solves;
+    this.solves = solves;
   }
 
   addSolve(solve) {
-    return new Session(this.name, [...this.timeObjs, solve]);
+    return new Session(this.name, [...this.solves, solve]);
   }
 }
