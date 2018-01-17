@@ -11,6 +11,7 @@ export const TIMER_STOPPED = 'TIMER_STOPPED';
 export const SPACEBAR_IS_DOWN_SET = 'SPACEBAR_IS_DOWN_SET';
 export const SESSION_CREATED = 'SESSION_CREATED';
 export const SESSION_SWITCHED = 'SESSION_SWITCHED';
+export const SESSIONS_SET = 'SESSIONS_SET';
 export const PENALTY_SET = 'PENALTY_SET';
 
 // settings

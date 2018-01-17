@@ -48,6 +48,10 @@ export function switchSession(index) {
   return { type: actionTypes.SESSION_SWITCHED, payload: { index } };
 }
 
+export function setSessions(sessions) {
+  return { type: actionTypes.SESSIONS_SET, payload: { sessions } };
+}
+
 export function setPenaltyType(penaltyType, solveIndex) {
   return { type: actionTypes.PENALTY_SET, payload: { penaltyType, solveIndex } };
 }

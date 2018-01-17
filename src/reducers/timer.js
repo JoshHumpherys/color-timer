@@ -117,8 +117,14 @@ export default function timer(
     case actionTypes.SESSION_SWITCHED: {
       return { ...state, currentSessionIndex: action.payload.index };
     }
-    default: {
-      return state;
+    case actionTypes.SESSIONS_SET: {
+      const sessions = [...action.payload.sessions].map(session =>
+        new Session(session.name, session.solves.map(solve =>
+          new Solve(solve.scramble, new Time(solve.timeObj.timeMillis, solve.timeObj.penaltyType), solve.comment)
+        ))
+      );
+
+      return { ...state, sessions };
     }
     case actionTypes.PENALTY_SET: {
       const { penaltyType, solveIndex } = action.payload;
@@ -129,6 +135,9 @@ export default function timer(
         ...state,
         sessions
       };
+    }
+    default: {
+      return state;
     }
   }
 }
