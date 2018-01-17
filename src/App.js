@@ -52,8 +52,7 @@ const types = {
   clock: 'Clock',
   minx: 'Megaminx',
   pyram: 'Pyraminx',
-  sq1: 'Square 1',
-  skewb: 'Skewb'
+  sq1: 'Square 1'
 };
 
 // TODO move these to a constants file?

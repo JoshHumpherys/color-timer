@@ -1,28 +1,37 @@
 import * as actionTypes from '../constants/actionTypes'
 import * as stateTypes from '../constants/stateTypes'
-import  Scrambo from 'scrambo'
 import Session from '../classes/Session'
 import Solve from '../classes/Solve'
 import Time from '../classes/Time'
 import * as penaltyTypes from '../constants/penaltyTypes'
 
+import scrambler222 from '../lib/scramble_222'
+import scrambler333 from '../lib/scramble_333'
+import { scrambler444 } from '../lib/scramble_NNN'
+import { scrambler555 } from '../lib/scramble_NNN'
+import { scrambler666 } from '../lib/scramble_NNN'
+import { scrambler777 } from '../lib/scramble_NNN'
+import scramblerClock from '../lib/scramble_clock'
+import scramblerMinx from '../lib/scramble_minx'
+import scramblerPyram from '../lib/scramble_pyram'
+import scramblerSq1 from '../lib/scramble_sq1'
+
 export default function timer(
   state = {
     type: '333',
-    scrambos: {
-      222: new Scrambo().type('222'),
-      333: new Scrambo().type('333'),
-      444: new Scrambo().type('444'),
-      555: new Scrambo().type('555'),
-      666: new Scrambo().type('666'),
-      777: new Scrambo().type('777'),
-      clock: new Scrambo().type('clock'),
-      minx: new Scrambo().type('minx'),
-      pyram: new Scrambo().type('pyram'),
-      sq1: new Scrambo().type('sq1'),
-      skewb: new Scrambo().type('skewb')
+    scramblers: {
+      222: scrambler222,
+      333: scrambler333,
+      444: scrambler444,
+      555: scrambler555,
+      666: scrambler666,
+      777: scrambler777,
+      clock: scramblerClock,
+      minx: scramblerMinx,
+      pyram: scramblerPyram,
+      sq1: scramblerSq1
     },
-    scramble: new Scrambo().get(), // TODO don't make another Scrambo object
+    scramble: scrambler333.getRandomScramble().scramble_string,
     state: stateTypes.IDLE,
     inspectionStartTime: null,
     holdingStartTime: null,
@@ -42,7 +51,7 @@ export default function timer(
       return { ...state, type: action.payload.type };
     }
     case actionTypes.SCRAMBLE_GENERATED: {
-      return { ...state, scramble: state.scrambos[action.payload.type].get() };
+      return { ...state, scramble: state.scramblers[action.payload.type].getRandomScramble().scramble_string };
     }
     case actionTypes.INSPECTION_STARTED: {
       let { timeObj, penaltyType } = state;
@@ -96,7 +105,7 @@ export default function timer(
         state: stateTypes.IDLE,
         runningStartTime: null,
         timeObj,
-        scramble: state.scrambos[state.type].get(),
+        scramble: state.scramblers[state.type].getRandomScramble().scramble_string,
         timerJustStopped: true,
         sessions
       };
