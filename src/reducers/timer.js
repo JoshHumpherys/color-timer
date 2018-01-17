@@ -58,7 +58,7 @@ export default function timer(
         penaltyType
       };
     }
-    case actionTypes.PENALTY_SET: {
+    case actionTypes.CURRENT_PENALTY_SET: {
       return { ...state, penaltyType: action.payload.penaltyType };
     }
     case actionTypes.HOLDING_STARTED: {
@@ -83,13 +83,14 @@ export default function timer(
     }
     case actionTypes.TIMER_STOPPED: {
       const sessions = [...state.sessions];
+      const currentSession = sessions[state.currentSessionIndex];
       const timeObj = new Time(
         action.payload.runningStopTime - state.runningStartTime +
           (state.penaltyType === penaltyTypes.PLUS_TWO ? 2000 : 0),
         state.penaltyType
       );
       const solve = new Solve(state.scramble, timeObj, state.penaltyType);
-      sessions[state.currentSessionIndex] = sessions[state.currentSessionIndex].addSolve(solve);
+      sessions[state.currentSessionIndex] = currentSession.addSolve(solve);
       return {
         ...state,
         state: stateTypes.IDLE,
@@ -118,6 +119,16 @@ export default function timer(
     }
     default: {
       return state;
+    }
+    case actionTypes.PENALTY_SET: {
+      const { penaltyType, solveIndex } = action.payload;
+      const sessions = [...state.sessions];
+      const currentSession = sessions[state.currentSessionIndex];
+      sessions[state.currentSessionIndex] = currentSession.setPenaltyType(penaltyType, solveIndex);
+      return {
+        ...state,
+        sessions
+      };
     }
   }
 }

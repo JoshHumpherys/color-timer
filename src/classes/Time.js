@@ -6,7 +6,13 @@ export default class Time {
     this.penaltyType = penaltyType;
   }
 
-  setPenalty(penaltyType) {
-    return new Time(this.timeMillis, penaltyType);
+  setPenaltyType(penaltyType) {
+    let newTime = this.timeMillis;
+    if(penaltyType === penaltyTypes.PLUS_TWO && this.penaltyType !== penaltyTypes.PLUS_TWO) {
+      newTime += 2000;
+    } else if(penaltyType !== penaltyTypes.PLUS_TWO && this.penaltyType === penaltyTypes.PLUS_TWO) {
+      newTime -= 2000;
+    }
+    return new Time(newTime, penaltyType);
   }
 }

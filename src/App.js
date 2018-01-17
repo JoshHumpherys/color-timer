@@ -1,21 +1,22 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Button, Checkbox, Dropdown, Form, Modal } from 'semantic-ui-react'
+import { Button, Checkbox, Dropdown, Form, Modal, Radio } from 'semantic-ui-react'
 import {
   setType,
   generateScramble,
   startInspection,
-  setPenaltyType,
+  setCurrentPenaltyType,
   startHolding,
   stopHolding,
   startTimer,
   stopTimer,
   setSpacebarIsDown,
   createSession,
-  switchSession
+  switchSession,
+  setPenaltyType
 } from './actions/timer'
 import { setDisplayMillis, setInspection, setHideSolveTime, setHoldTime } from './actions/settings'
-import {createModal, removeModal, setModalState} from './actions/modal'
+import { createModal, removeModal, setModalState } from './actions/modal'
 import {
   getType,
   getScrambo,
@@ -212,7 +213,7 @@ class App extends Component {
             break;
           case penaltyTypes.PLUS_TWO:
           case penaltyTypes.DNF:
-            this.props.dispatch(setPenaltyType(penaltyType));
+            this.props.dispatch(setCurrentPenaltyType(penaltyType));
             break;
         }
       }
@@ -348,19 +349,52 @@ class App extends Component {
         };
         break;
       case modalTypes.SOLVE_MODAL:
-        console.log(this.props.solves);
-        console.log(this.props.modalState.solveNumber);
+        const { solveNumber } = this.props.modalState;
+        const solve = solveNumber !== undefined ? this.props.solves[solveNumber] : undefined;
+        const scramble = solve ? solve.scramble : '';
+        const penaltyType = solve ? solve.timeObj.penaltyType : '';
+        const radioChanged = (e, { value }) => this.props.dispatch(setPenaltyType(value, solveNumber));
         modalContents = {
           header: 'Solve #' + (this.props.modalState.solveNumber + 1),
           body: (
             <div>
               <div>
                 <h4>Scramble</h4>
+                <div>{scramble}</div>
+              </div>
+              <br />
+              <div>
+                <h4>Penalty</h4>
                 <div>
-                  {
-                    this.props.modalState.solveNumber !== undefined ?
-                      this.props.solves[this.props.modalState.solveNumber].scramble : ''
-                  }
+                  <Form>
+                    <Form.Field>
+                      <Radio
+                        label='None'
+                        name='penalty'
+                        value={penaltyTypes.NONE}
+                        checked={penaltyType === penaltyTypes.NONE}
+                        onChange={radioChanged}
+                      />
+                    </Form.Field>
+                    <Form.Field>
+                      <Radio
+                        label='+2'
+                        name='penalty'
+                        value={penaltyTypes.PLUS_TWO}
+                        checked={penaltyType === penaltyTypes.PLUS_TWO}
+                        onChange={radioChanged}
+                      />
+                    </Form.Field>
+                    <Form.Field>
+                      <Radio
+                        label='DNF'
+                        name='penalty'
+                        value={penaltyTypes.DNF}
+                        checked={penaltyType === penaltyTypes.DNF}
+                        onChange={radioChanged}
+                      />
+                    </Form.Field>
+                  </Form>
                 </div>
               </div>
             </div>
@@ -468,7 +502,7 @@ class App extends Component {
                       </span>
                     </td>
                     <td>
-                      {this.getDisplayTime(solve.timeObj.timeMillis, solve.penaltyType)}
+                      {this.getDisplayTime(solve.timeObj.timeMillis, solve.timeObj.penaltyType)}
                     </td>
                     <td>
                       {

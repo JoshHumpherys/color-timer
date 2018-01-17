@@ -16,8 +16,8 @@ export function startInspection(inspectionStartTime) {
   return { type: actionTypes.INSPECTION_STARTED, payload: { inspectionStartTime } };
 }
 
-export function setPenaltyType(penaltyType) {
-  return { type: actionTypes.PENALTY_SET, payload: { penaltyType } };
+export function setCurrentPenaltyType(penaltyType) {
+  return { type: actionTypes.CURRENT_PENALTY_SET, payload: { penaltyType } };
 }
 
 export function startHolding(holdingStartTime) {
@@ -46,4 +46,8 @@ export function createSession(name) {
 
 export function switchSession(index) {
   return { type: actionTypes.SESSION_SWITCHED, payload: { index } };
+}
+
+export function setPenaltyType(penaltyType, solveIndex) {
+  return { type: actionTypes.PENALTY_SET, payload: { penaltyType, solveIndex } };
 }

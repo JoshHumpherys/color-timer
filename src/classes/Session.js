@@ -7,4 +7,10 @@ export default class Session {
   addSolve(solve) {
     return new Session(this.name, [...this.solves, solve]);
   }
+
+  setPenaltyType(penaltyType, solveIndex) {
+    const newSolves = [...this.solves];
+    newSolves[solveIndex] = newSolves[solveIndex].setPenaltyType(penaltyType);
+    return new Session(this.name, newSolves);
+  }
 }
