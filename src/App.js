@@ -40,6 +40,7 @@ import * as stateTypes from './constants/stateTypes'
 import * as holdTimeTypes from './constants/holdTimeTypes'
 import * as penaltyTypes from './constants/penaltyTypes'
 import * as modalTypes from './constants/modalTypes'
+import logo from './img/logo.png';
 
 // TODO move these to a constants file?
 const types = {
@@ -428,25 +429,32 @@ class App extends Component {
     return (
       <div className="app">
         <header className="header">
-          <select className="header-button" onChange={e => this.setType(e.target.value)}>
-            {
-              Object.keys(types).map(key =>
-                <option key={key} value={key} selected={this.props.type === key ? 'selected' : ''}>
-                  {types[key]}
-                </option>
-              )
-            }
-          </select>
-          <button className="header-button centered-text" onClick={e => this.generateScramble(this.props.type)}>
-            Next
-          </button>
+          <img src={logo} className="logo" />
           <h1 className="scramble">{this.props.scramble}</h1>
-          <button className="header-button centered-text" onClick={
-            () => this.props.dispatch(createModal(modalTypes.SESSIONS_MODAL))
-          }>Sessions</button>
-          <button className="header-button centered-text" onClick={
-            () => this.props.dispatch(createModal(modalTypes.SETTINGS_MODAL))
-          }>Settings</button>
+          <div className="header-buttons-container">
+            <div className="header-buttons-container-top">
+              <select className="header-button" onChange={e => this.setType(e.target.value)}>
+                {
+                  Object.keys(types).map(key =>
+                    <option key={key} value={key} selected={this.props.type === key ? 'selected' : ''}>
+                      {types[key]}
+                    </option>
+                  )
+                }
+              </select>
+              <button className="header-button centered-text" onClick={e => this.generateScramble(this.props.type)}>
+                Next
+              </button>
+            </div>
+            <div className="header-buttons-container-bottom">
+              <button className="header-button centered-text" onClick={
+                () => this.props.dispatch(createModal(modalTypes.SESSIONS_MODAL))
+              }>Sessions</button>
+              <button className="header-button centered-text" onClick={
+                () => this.props.dispatch(createModal(modalTypes.SETTINGS_MODAL))
+              }>Settings</button>
+            </div>
+          </div>
         </header>
         <div className={'timer' + (this.isReady(now) ? ' ready' : '')}>
           <div className="timer-times-container">

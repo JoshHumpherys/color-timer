@@ -44,13 +44,31 @@ body {
   z-index: 1;
 }
 
+.logo {
+  width: 260px;
+  height: 52px;
+  margin-top: 5px;
+}
+
 .scramble {
   font-size: 2em;
   flex: 1;
+  margin-top: 15px;
+}
+
+.header-buttons-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-buttons-container > div {
+  flex: 1;
+  display: flex;
 }
 
 .header-button {
-  width: 5.5em;
+  max-width: 135px;
+  flex: 1;
   color: white;
   background-color: deepskyblue;
   outline: none;
@@ -61,11 +79,22 @@ body {
   -webkit-appearance: none;
   -moz-appearance: none;
   text-indent: 10px;
-  margin-right: 10px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.header-button:not(:last-child) {
+  margin-right: 10px;
+}
+
+.header-buttons-container-top > * { /* TODO figure out a better way to do this */
+  margin-bottom: 5px;
+}
+
+.header-buttons-container-bottom > * {
+  margin-top: 5px;
 }
 
 .centered-text {
