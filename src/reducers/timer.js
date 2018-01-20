@@ -114,6 +114,11 @@ export default function timer(
       const { spacebarIsDown } = action.payload;
       return { ...state, spacebarIsDown, timerJustStopped: state.timerJustStopped && !spacebarIsDown };
     }
+    case actionTypes.SOLVE_DELETED: {
+      const sessions = [...state.sessions];
+      sessions[state.currentSessionIndex].solves.splice(action.payload.solveIndex, 1);
+      return { ...state, sessions };
+    }
     case actionTypes.SESSION_CREATED: {
       const { name } = action.payload;
       const newName = name || 'Anonymous Session ' + state.sessions.length + 1;

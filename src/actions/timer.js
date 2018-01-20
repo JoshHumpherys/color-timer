@@ -40,6 +40,10 @@ export function setSpacebarIsDown(spacebarIsDown) {
   return { type: actionTypes.SPACEBAR_IS_DOWN_SET, payload: { spacebarIsDown } };
 }
 
+export function deleteSolve(solveIndex) {
+  return { type: actionTypes.SOLVE_DELETED, payload: { solveIndex } };
+}
+
 export function createSession(name) {
   return { type: actionTypes.SESSION_CREATED, payload: { name } };
 }

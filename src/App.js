@@ -11,6 +11,7 @@ import {
   startTimer,
   stopTimer,
   setSpacebarIsDown,
+  deleteSolve,
   createSession,
   switchSession,
   setSessions,
@@ -73,6 +74,19 @@ class SubmitButton extends Component {
         icon="checkmark"
         labelPosition="right"
         content={this.props.text || 'Submit'}
+        onClick={this.props.onClick} />
+    );
+  }
+}
+
+class DeleteButton extends Component {
+  render() {
+    return (
+      <Button
+        negative
+        icon="trash"
+        labelPosition="right"
+        content="Delete"
         onClick={this.props.onClick} />
     );
   }
@@ -404,7 +418,13 @@ class App extends Component {
               </div>
             </div>
           ),
-          actions: <SubmitButton text="Done" onClick={() => this.props.dispatch(removeModal())} />
+          actions: [
+            <DeleteButton onClick={() => {
+              this.props.dispatch(deleteSolve(solveNumber));
+              this.props.dispatch(removeModal());
+            }} />,
+            <SubmitButton text="Done" onClick={() => this.props.dispatch(removeModal())} />
+          ]
         };
         break;
       default:
