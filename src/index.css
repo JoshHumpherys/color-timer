@@ -25,7 +25,7 @@ body {
 
 .app {
   height: 100%;
-  background-color: paleturquoise;
+  background-color: white;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -70,7 +70,7 @@ body {
   max-width: 135px;
   flex: 1;
   color: white;
-  background-color: deepskyblue;
+  background-color: #0dd;
   outline: none;
   border: none;
   cursor: pointer;
@@ -115,7 +115,7 @@ body {
 .timer-times-container {
   flex: 1;
   max-width: 300px;
-  background-color: dodgerblue;
+  background-color: #55f;
   box-shadow: 4px 0 8px rgba(0, 0, 0, .3);
   overflow-y: auto;
   color: #FFF;
@@ -175,12 +175,12 @@ h4.timer-times-avg {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: deepskyblue;
+  background: #0dd;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #00afef; /* deepskyblue is #00bfff */
+  background: #0cc;
 }
 
 .field > *:not(:last-child) {
