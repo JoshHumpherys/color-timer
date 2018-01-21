@@ -12,8 +12,10 @@ export const getSpacebarIsDown = state => state.timer.spacebarIsDown;
 export const getTimerJustStopped = state => state.timer.timerJustStopped;
 export const getTimeObj = state => state.timer.timeObj;
 export const getPenaltyType = state => state.timer.penaltyType;
-export const getSessions = state => state.timer.sessions;
-export const getCurrentSessionIndex = state => state.timer.currentSessionIndex;
+export const getCurrentSessions = state =>
+  state.timer.sessions.filter(session => session.type === state.timer.type);
+export const getCurrentSessionIndex = state =>
+  getCurrentSessions(state).indexOf(state.timer.sessions[state.timer.currentSessionIndex]);
 
 export const getSolveStats = state => {
   const solves = [...state.timer.sessions[state.timer.currentSessionIndex].solves];

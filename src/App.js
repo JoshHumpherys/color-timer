@@ -31,7 +31,7 @@ import {
   getTimerJustStopped,
   getTimeObj,
   getPenaltyType,
-  getSessions,
+  getCurrentSessions,
   getCurrentSessionIndex,
   getSolveStats
 } from './selectors/timer'
@@ -43,19 +43,7 @@ import * as penaltyTypes from './constants/penaltyTypes'
 import * as modalTypes from './constants/modalTypes'
 import logo from './img/logo.png';
 
-// TODO move these to a constants file?
-const types = {
-  222: '2x2x2',
-  333: '3x3x3',
-  444: '4x4x4',
-  555: '5x5x5',
-  666: '6x6x6',
-  777: '7x7x7',
-  clock: 'Clock',
-  minx: 'Megaminx',
-  pyram: 'Pyraminx',
-  sq1: 'Square 1'
-};
+import { solveTypeToString, getSolveTypeKeys } from './constants/solveTypeToString'
 
 // TODO move these to a constants file?
 const holdTimes = {
@@ -328,7 +316,7 @@ class App extends Component {
         break;
       case modalTypes.SESSIONS_MODAL:
         modalContents = {
-          header: 'Sessions',
+          header: solveTypeToString(this.props.type) + ' Sessions',
           body: (
             <div>
               <div>
@@ -455,9 +443,9 @@ class App extends Component {
             <div className="header-buttons-container-top">
               <select className="header-button" onChange={e => this.setType(e.target.value)}>
                 {
-                  Object.keys(types).map(key =>
+                  getSolveTypeKeys().map(key =>
                     <option key={key} value={key} selected={this.props.type === key ? 'selected' : ''}>
-                      {types[key]}
+                      {solveTypeToString(key)}
                     </option>
                   )
                 }
@@ -594,7 +582,7 @@ export default connect(
       timerJustStopped: getTimerJustStopped(state),
       timeObj: getTimeObj(state),
       penaltyType: getPenaltyType(state),
-      sessions: getSessions(state),
+      sessions: getCurrentSessions(state),
       currentSessionIndex: getCurrentSessionIndex(state),
       bests: solveStats.bests,
       solves: solveStats.solves,

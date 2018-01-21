@@ -16,6 +16,11 @@ import scramblerMinx from '../lib/scramble_minx'
 import scramblerPyram from '../lib/scramble_pyram'
 import scramblerSq1 from '../lib/scramble_sq1'
 
+import { solveTypeToString } from '../constants/solveTypeToString'
+
+const createNewSession = ({ type, name, number }) =>
+  new Session(name || solveTypeToString(type) + ' Session ' + number, type);
+
 export default function timer(
   state = {
     type: '333',
@@ -41,14 +46,25 @@ export default function timer(
     timeObj: new Time(0),
     penaltyType: penaltyTypes.NONE,
     sessions: [
-      new Session('Anonymous Session 1')
+      new Session('3x3x3 Session 1', '333')
     ],
     currentSessionIndex: 0
   },
   action) {
   switch (action.type) {
     case actionTypes.TYPE_SET: {
-      return { ...state, type: action.payload.type };
+      let { type } = action.payload;
+      let sessions = state.sessions;
+      let currentSessionIndex;
+      let index = sessions.findIndex(session => session.type === type);
+      if(index === -1) {
+        const number = state.sessions.filter(session => session.type === type).length + 1;
+        sessions = [...sessions, createNewSession({ type, number })];
+        currentSessionIndex = sessions.length - 1;
+      } else {
+        currentSessionIndex = index;
+      }
+      return { ...state, type, sessions, currentSessionIndex };
     }
     case actionTypes.SCRAMBLE_GENERATED: {
       return { ...state, scramble: state.scramblers[action.payload.type].getRandomScramble().scramble_string };
@@ -120,20 +136,26 @@ export default function timer(
       return { ...state, sessions };
     }
     case actionTypes.SESSION_CREATED: {
-      const { name } = action.payload;
-      const newName = name || 'Anonymous Session ' + state.sessions.length + 1;
+      const session = createNewSession({
+        type: state.type,
+        number: state.sessions.filter(session => session.type === state.type).length + 1,
+        name: action.payload.name
+      });
       return {
         ...state,
-        sessions: [...state.sessions, new Session(newName)],
+        sessions: [...state.sessions, session],
         currentSessionIndex: state.sessions.length
       };
     }
     case actionTypes.SESSION_SWITCHED: {
-      return { ...state, currentSessionIndex: action.payload.index };
+      const currentIndex = action.payload.index;
+      const currentSessions = state.sessions.filter(session => session.type === state.type);
+      const currentSession = currentSessions[currentIndex];
+      return { ...state, currentSessionIndex: state.sessions.findIndex(session => session === currentSession) };
     }
     case actionTypes.SESSIONS_SET: {
       const sessions = [...action.payload.sessions].map(session =>
-        new Session(session.name, session.solves.map(solve =>
+        new Session(session.name, session.type, session.solves.map(solve =>
           new Solve(solve.scramble, new Time(solve.timeObj.timeMillis, solve.timeObj.penaltyType), solve.comment)
         ))
       );
