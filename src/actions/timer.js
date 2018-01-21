@@ -52,6 +52,10 @@ export function switchSession(index) {
   return { type: actionTypes.SESSION_SWITCHED, payload: { index } };
 }
 
+export function deleteCurrentSession() {
+  return { type: actionTypes.CURRENT_SESSION_DELETED  };
+}
+
 export function setSessions(sessions) {
   return { type: actionTypes.SESSIONS_SET, payload: { sessions } };
 }

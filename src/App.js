@@ -14,6 +14,7 @@ import {
   deleteSolve,
   createSession,
   switchSession,
+  deleteCurrentSession,
   setSessions,
   setPenaltyType
 } from './actions/timer'
@@ -352,7 +353,13 @@ class App extends Component {
               </div>
             </div>
           ),
-          actions: <SubmitButton onClick={() => this.props.dispatch(removeModal())} />
+          actions: [
+            <DeleteButton onClick={() => {
+              this.props.dispatch(deleteCurrentSession());
+              this.props.dispatch(removeModal());
+            }} />,
+            <SubmitButton onClick={() => this.props.dispatch(removeModal())} />
+          ]
         };
         break;
       case modalTypes.SOLVE_MODAL:

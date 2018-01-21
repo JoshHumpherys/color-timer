@@ -153,14 +153,38 @@ export default function timer(
       const currentSession = currentSessions[currentIndex];
       return { ...state, currentSessionIndex: state.sessions.findIndex(session => session === currentSession) };
     }
+    case actionTypes.CURRENT_SESSION_DELETED: {
+      let sessions = [...state.sessions];
+      sessions.splice(state.currentSessionIndex, 1);
+      let currentSessionIndex;
+      let index = sessions.findIndex(session => session.type === state.type);
+      if(index === -1) {
+        const number = sessions.filter(session => session.type === state.type).length + 1;
+        sessions = [...sessions, createNewSession({ type: state.type, number })];
+        currentSessionIndex = sessions.length - 1;
+      } else {
+        currentSessionIndex = index;
+      }
+      return { ...state, sessions, currentSessionIndex };
+    }
     case actionTypes.SESSIONS_SET: {
-      const sessions = [...action.payload.sessions].map(session =>
+      let sessions = [...action.payload.sessions].map(session =>
         new Session(session.name, session.type, session.solves.map(solve =>
           new Solve(solve.scramble, new Time(solve.timeObj.timeMillis, solve.timeObj.penaltyType), solve.comment)
         ))
       );
 
-      return { ...state, sessions };
+      let currentSessionIndex;
+      let index = sessions.findIndex(session => session.type === state.type);
+      if(index === -1) {
+        const number = sessions.filter(session => session.type === state.type).length + 1;
+        sessions = [...sessions, createNewSession({ type: state.type, number })];
+        currentSessionIndex = sessions.length - 1;
+      } else {
+        currentSessionIndex = index;
+      }
+
+      return { ...state, sessions, currentSessionIndex };
     }
     case actionTypes.PENALTY_SET: {
       const { penaltyType, solveIndex } = action.payload;
