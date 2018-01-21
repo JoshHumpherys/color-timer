@@ -1,8 +1,8 @@
-# [Cube Timer](https://color-timer.firebaseapp.com/)
+# [Color Timer](https://color-timer.firebaseapp.com/)
 
 ## Introduction
 
-Cube Timer is a browser-based timer for speedcubers to record solve times and perform analysis. Upon completion, it will automatically compute and display live averages and distributions. The project was started in January 2018 and is currently undergoing rapid development. It will also likely be renamed.
+Color Timer is a browser-based timer for speedcubers to record solve times and perform analysis. Upon completion, it will automatically compute and display live averages and distributions. The project was started in January 2018 and is currently undergoing rapid development.
 
 ## Current Features
 * Scrambles several different puzzle types
