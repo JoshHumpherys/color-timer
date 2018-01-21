@@ -1,4 +1,4 @@
-# Cube Timer
+# [Cube Timer](https://color-timer.firebaseapp.com/)
 
 ## Introduction
 
@@ -7,7 +7,8 @@ Cube Timer is a browser-based timer for speedcubers to record solve times and pe
 ## Current Features
 * Scrambles several different puzzle types
 * Records solves times
-* Saves solve times for current browser session
+* Saves solve times for future browser sessions
+* Supports creating, deleting, and switching sessions
 * Displays the following sessions stats:
   * Overall:
     * Mean
@@ -27,7 +28,5 @@ Cube Timer is a browser-based timer for speedcubers to record solve times and pe
     * Average of 12
 
 ## Future Features
-- Save solve times for future viewing
-- Implement creating and switching sessions
 - Display lifetime stats
 - Display distribution graphs for current session and lifetime
