@@ -28,12 +28,12 @@ store.subscribe(() =>  {
 });
 
 const config = {
-  apiKey: "AIzaSyCKkoq0s7o4U63lNcluZPLFVv-IVkl_Awc",
-  authDomain: "coolcubetimer.firebaseapp.com",
-  databaseURL: "https://coolcubetimer.firebaseio.com",
-  projectId: "coolcubetimer",
-  storageBucket: "coolcubetimer.appspot.com",
-  messagingSenderId: "348385279236"
+  apiKey: "AIzaSyAT93O_eIpSkjr0aTQbP3Y7CdW8IXxE14s",
+  authDomain: "color-timer.firebaseapp.com",
+  databaseURL: "https://color-timer.firebaseio.com",
+  projectId: "color-timer",
+  storageBucket: "",
+  messagingSenderId: "1018938074440"
 };
 firebase.initializeApp(config);
 
