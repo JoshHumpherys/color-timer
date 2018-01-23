@@ -9,6 +9,11 @@ Color Timer is a browser-based timer for speedcubers to record solve times and p
 * Records solves times
 * Saves solve times for future browser sessions
 * Supports creating, deleting, and switching sessions
+* Includes settings for:
+  * Hiding time while solving
+  * Displaying milliseconds
+  * Toggling inspection
+  * Setting hold time
 * Displays the following sessions stats:
   * Overall:
     * Mean
