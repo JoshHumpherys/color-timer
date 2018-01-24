@@ -11,6 +11,7 @@ import {
   startTimer,
   stopTimer,
   setSpacebarIsDown,
+  setTouchDown,
   deleteSolve,
   createSession,
   switchSession,
@@ -28,7 +29,8 @@ import {
   getInspectionStartTime,
   getHoldingStartTime,
   getRunningStartTime,
-  getSpacebarIsDown,
+  getSpacebarDown,
+  getTouchDown,
   getTimerJustStopped,
   getTimeObj,
   getPenaltyType,
@@ -159,21 +161,29 @@ class App extends Component {
       this.props.dispatch(setSessions(JSON.parse(sessions)));
     }
     document.addEventListener('keydown', e => {
-      if(e.keyCode === 32 && !this.props.spacebarIsDown) {
+      if(e.keyCode === 32 && !this.props.spacebarDown) {
         this.props.dispatch(setSpacebarIsDown(true));
       }
     });
     document.addEventListener('keyup', e => {
-      if(e.keyCode === 32 && this.props.spacebarIsDown) {
+      if(e.keyCode === 32 && this.props.spacebarDown) {
         this.props.dispatch(setSpacebarIsDown(false));
       }
+    });
+    this.timerTextContainer.addEventListener('touchstart', e => {
+      this.props.dispatch(setTouchDown(true));
+      e.preventDefault();
+    });
+    this.timerTextContainer.addEventListener('touchend', e => {
+      this.props.dispatch(setTouchDown(false));
+      e.preventDefault();
     });
     setInterval(this.forceUpdate.bind(this), 20);
   }
 
   componentDidUpdate(prevProps) {
     const now = Date.now();
-    if(this.props.spacebarIsDown && !prevProps.spacebarIsDown) {
+    if((this.props.spacebarDown && !prevProps.spacebarDown) || (this.props.touchDown && !prevProps.touchDown)) {
       switch(this.props.state) {
         case stateTypes.IDLE:
           if(!this.props.inspection) {
@@ -187,7 +197,7 @@ class App extends Component {
             this.props.dispatch(stopTimer(now));
           break;
       }
-    } else if(!this.props.spacebarIsDown && prevProps.spacebarIsDown) {
+    } else if((!this.props.spacebarDown && prevProps.spacebarDown) || (!this.props.touchDown && prevProps.touchDown)) {
       switch(this.props.state) {
         case stateTypes.IDLE:
           if(!this.props.timerJustStopped) {
@@ -550,7 +560,9 @@ class App extends Component {
               }
             </table>
           </div>
-          <div className="timer-text-container">
+          <div
+            ref={timerTextContainer => this.timerTextContainer = timerTextContainer}
+            className="timer-text-container">
             <p className={displayTimeDivClassName}>
               {displayTime}
             </p>
@@ -585,7 +597,8 @@ export default connect(
       inspectionStartTime: getInspectionStartTime(state),
       holdingStartTime: getHoldingStartTime(state),
       runningStartTime: getRunningStartTime(state),
-      spacebarIsDown: getSpacebarIsDown(state),
+      spacebarDown: getSpacebarDown(state),
+      touchDown: getTouchDown(state),
       timerJustStopped: getTimerJustStopped(state),
       timeObj: getTimeObj(state),
       penaltyType: getPenaltyType(state),

@@ -41,7 +41,8 @@ export default function timer(
     inspectionStartTime: null,
     holdingStartTime: null,
     runningStartTime: null,
-    spacebarIsDown: false,
+    spacebarDown: false,
+    touchDown: false,
     timerJustStopped: false,
     timeObj: new Time(0),
     penaltyType: penaltyTypes.NONE,
@@ -126,9 +127,13 @@ export default function timer(
         sessions
       };
     }
-    case actionTypes.SPACEBAR_IS_DOWN_SET: {
-      const { spacebarIsDown } = action.payload;
-      return { ...state, spacebarIsDown, timerJustStopped: state.timerJustStopped && !spacebarIsDown };
+    case actionTypes.SPACEBAR_DOWN_SET: {
+      const { spacebarDown } = action.payload;
+      return { ...state, spacebarDown, timerJustStopped: state.timerJustStopped && !spacebarDown };
+    }
+    case actionTypes.TOUCH_DOWN_SET: {
+      const { touchDown } = action.payload;
+      return { ...state, touchDown, timerJustStopped: state.timerJustStopped && !touchDown };
     }
     case actionTypes.SOLVE_DELETED: {
       const sessions = [...state.sessions];

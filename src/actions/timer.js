@@ -36,8 +36,12 @@ export function stopTimer(runningStopTime) {
   return { type: actionTypes.TIMER_STOPPED, payload: { runningStopTime } };
 }
 
-export function setSpacebarIsDown(spacebarIsDown) {
-  return { type: actionTypes.SPACEBAR_IS_DOWN_SET, payload: { spacebarIsDown } };
+export function setSpacebarIsDown(spacebarDown) {
+  return { type: actionTypes.SPACEBAR_DOWN_SET, payload: { spacebarDown } };
+}
+
+export function setTouchDown(touchDown) {
+  return { type: actionTypes.TOUCH_DOWN_SET, payload: { touchDown } };
 }
 
 export function deleteSolve(solveIndex) {
