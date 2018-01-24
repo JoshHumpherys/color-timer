@@ -191,3 +191,9 @@ h4.timer-times-avg {
   cursor: pointer;
   text-decoration: underline;
 }
+
+@media screen and (max-width: 500px) {
+  .logo {
+    display: none;
+  }
+}
