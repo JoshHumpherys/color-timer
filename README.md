@@ -1,4 +1,4 @@
-# [Color Timer](https://color-timer.firebaseapp.com/)
+# [Color Timer](https://www.colortimer.us)
 
 ## Introduction
 
