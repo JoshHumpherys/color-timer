@@ -22,6 +22,7 @@ export const INSPECTION_SET = 'INSPECTION_SET';
 export const HOLD_TIME_SET = 'HOLD_TIME_SET';
 export const DISPLAY_MILLIS_SET = 'DISPLAY_MILLIS_SET';
 export const HIDE_SOLVE_TIME_SET = 'HIDE_SOLVE_TIME_SET';
+export const SHOW_TIMES_SET = 'SHOW_TIMES_SET';
 
 // modal
 export const MODAL_CREATED = 'MODAL_CREATED';

@@ -19,7 +19,7 @@ import {
   setSessions,
   setPenaltyType
 } from './actions/timer'
-import { setDisplayMillis, setInspection, setHideSolveTime, setHoldTime } from './actions/settings'
+import { setDisplayMillis, setInspection, setHideSolveTime, setHoldTime, setShowTimes } from './actions/settings'
 import { createModal, removeModal, setModalState } from './actions/modal'
 import {
   getType,
@@ -38,7 +38,7 @@ import {
   getCurrentSessionIndex,
   getSolveStats
 } from './selectors/timer'
-import { getInspection, getHoldTimeType, getDisplayMillis, getHideSolveTime } from './selectors/settings'
+import { getInspection, getHoldTimeType, getDisplayMillis, getHideSolveTime, getShowTimes } from './selectors/settings'
 import { getModalType, getModalState } from './selectors/modal'
 import * as stateTypes from './constants/stateTypes'
 import * as holdTimeTypes from './constants/holdTimeTypes'
@@ -304,6 +304,15 @@ class App extends Component {
               </div>
               <br />
               <div>
+                <h4>Display stats</h4>
+                <Checkbox
+                  toggle
+                  defaultChecked={this.props.showTimes}
+                  onChange={(e, data) => this.props.dispatch(setShowTimes(data.checked))}
+                />
+              </div>
+              <br />
+              <div>
                 <h4>Hold time</h4>
                 <Dropdown
                   defaultValue={this.props.holdTimeType}
@@ -482,84 +491,90 @@ class App extends Component {
           </div>
         </header>
         <div className={'timer' + (this.isReady(now) ? ' ready' : '')}>
-          <div className="timer-times-container">
-            <table className="timer-times-table">
-              <tr>
-                <th />
-                <th>Current</th>
-                <th>Best</th>
-              </tr>
-              {
-                Object.entries(this.props.bests).filter(([ _, timeObj]) => timeObj).map(([ type, timeObj ]) => (
+          {
+            this.props.showTimes ? (
+              <div className="timer-times-container">
+                <table className="timer-times-table">
                   <tr>
-                    <td>
-                      {type}
-                    </td>
-                    <td>
-                      {getCurrentStat(type)}
-                    </td>
-                    <td>
-                      {timeObj ? this.getDisplayTime(timeObj.timeMillis, timeObj.penaltyType) : ''}
-                    </td>
+                    <th />
+                    <th>Current</th>
+                    <th>Best</th>
                   </tr>
-                ))
-              }
-            </table>
-            <h4 className="timer-times-mean">
-              Mean: {
-                this.props.mean ? this.getDisplayTime(this.props.mean.timeMillis, this.props.mean.penaltyType) : ''
-              }
-            </h4>
-            <h4 className="timer-times-avg">
-              Average: {
-                this.props.avg ? this.getDisplayTime(this.props.avg.timeMillis, this.props.avg.penaltyType) : ''
-              }
-            </h4>
-            <h4 className="timer-times-avg">
-              Standard Deviation: {
-                this.props.std ? this.getDisplayTime(this.props.std.timeMillis, this.props.std.penaltyType) : ''
-            }
-            </h4>
-            <table className="timer-times-table">
-              <tr>
-                <th>Solve</th>
-                <th>Time</th>
-                <th>Ao5</th>
-                <th>Ao12</th>
-              </tr>
-              {
-                this.props.solves.map((solve, i) => (
+                  {
+                    Object.entries(this.props.bests).filter(([_, timeObj]) => timeObj).map(([ type, timeObj ]) => (
+                      <tr>
+                        <td>
+                          {type}
+                        </td>
+                        <td>
+                          {getCurrentStat(type)}
+                        </td>
+                        <td>
+                          {timeObj ? this.getDisplayTime(timeObj.timeMillis, timeObj.penaltyType) : ''}
+                        </td>
+                      </tr>
+                    ))
+                  }
+                </table>
+                <h4 className="timer-times-mean">
+                  Mean: {
+                    this.props.mean ? this.getDisplayTime(this.props.mean.timeMillis, this.props.mean.penaltyType) : ''
+                  }
+                </h4>
+                <h4 className="timer-times-avg">
+                  Average: {
+                    this.props.avg ? this.getDisplayTime(this.props.avg.timeMillis, this.props.avg.penaltyType) : ''
+                  }
+                </h4>
+                <h4 className="timer-times-avg">
+                  Standard Deviation: {
+                    this.props.std ? this.getDisplayTime(this.props.std.timeMillis, this.props.std.penaltyType) : ''
+                }
+                </h4>
+                <table className="timer-times-table">
                   <tr>
-                    <td>
-                      <span className="solve-number" onClick={() => {
-                        this.props.dispatch(createModal(modalTypes.SOLVE_MODAL));
-                        this.props.dispatch(setModalState({ solveNumber: i }));
-                      }}>
-                        {i + 1}
-                      </span>
-                    </td>
-                    <td>
-                      {this.getDisplayTime(solve.timeObj.timeMillis, solve.timeObj.penaltyType)}
-                    </td>
-                    <td>
-                      {
-                        solve.timeObj.ao5 ?
-                          this.getDisplayTime(solve.timeObj.ao5.timeMillis, solve.timeObj.ao5.penaltyType) : ''
-                      }
-                    </td>
-                    <td>
-                      {
-                        solve.timeObj.ao12 ? this.getDisplayTime(
-                          solve.timeObj.ao12.timeMillis,
-                          solve.timeObj.ao12.penaltyType
-                        ) : ''
-                      }
-                    </td>
+                    <th>Solve</th>
+                    <th>Time</th>
+                    <th>Ao5</th>
+                    <th>Ao12</th>
                   </tr>
-                )).reverse()
-              }
-            </table>
-          </div>
+                  {
+                    this.props.solves.map((solve, i) => (
+                      <tr>
+                        <td>
+                          <span className="solve-number" onClick={() => {
+                            this.props.dispatch(createModal(modalTypes.SOLVE_MODAL));
+                            this.props.dispatch(setModalState({ solveNumber: i }));
+                          }}>
+                            {i + 1}
+                          </span>
+                        </td>
+                        <td>
+                          {this.getDisplayTime(solve.timeObj.timeMillis, solve.timeObj.penaltyType)}
+                        </td>
+                        <td>
+                          {
+                            solve.timeObj.ao5 ?
+                              this.getDisplayTime(solve.timeObj.ao5.timeMillis, solve.timeObj.ao5.penaltyType) : ''
+                          }
+                        </td>
+                        <td>
+                          {
+                            solve.timeObj.ao12 ? this.getDisplayTime(
+                              solve.timeObj.ao12.timeMillis,
+                              solve.timeObj.ao12.penaltyType
+                            ) : ''
+                          }
+                        </td>
+                      </tr>
+                    )).reverse()
+                  }
+                </table>
+              </div>
+            ) : (
+              undefined
+            )
+          }
           <div
             ref={timerTextContainer => this.timerTextContainer = timerTextContainer}
             className="timer-text-container">
@@ -614,6 +629,7 @@ export default connect(
       holdTime: holdTimes[holdTimeType],
       displayMillis: getDisplayMillis(state),
       hideSolveTime: getHideSolveTime(state),
+      showTimes: getShowTimes(state),
       modalType: getModalType(state),
       modalState: getModalState(state)
     };

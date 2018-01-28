@@ -15,3 +15,7 @@ export function setDisplayMillis(displayMillis) {
 export function setHideSolveTime(hideSolveTime) {
   return { type: actionTypes.HIDE_SOLVE_TIME_SET, payload: { hideSolveTime } };
 }
+
+export function setShowTimes(showTimes) {
+  return { type: actionTypes.SHOW_TIMES_SET, payload: { showTimes } };
+}

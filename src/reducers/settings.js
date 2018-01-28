@@ -6,7 +6,8 @@ export default function settings(
     inspection: false,
     holdTime: holdTimeTypes.THREE_TENTHS_SECOND,
     displayMillis: false,
-    hideSolveTime: false
+    hideSolveTime: false,
+    showTimes: true
   },
   action) {
   switch (action.type) {
@@ -21,6 +22,9 @@ export default function settings(
     }
     case actionTypes.HIDE_SOLVE_TIME_SET: {
       return { ...state, hideSolveTime: action.payload.hideSolveTime };
+    }
+    case actionTypes.SHOW_TIMES_SET: {
+      return { ...state, showTimes: action.payload.showTimes };
     }
     default: {
       return state;
