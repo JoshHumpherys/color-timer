@@ -41,7 +41,7 @@ body {
   color: white;
   display: flex;
   box-shadow: 0 4px 8px rgba(0, 0, 0, .3);
-  z-index: 1;
+  z-index: 2;
 }
 
 .logo {
@@ -116,9 +116,10 @@ body {
   flex: 1;
   max-width: 300px;
   background-color: #55f;
-  box-shadow: 4px 0 8px rgba(0, 0, 0, .3);
   overflow-y: auto;
   color: #FFF;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, .3);
+  z-index: 1;
 }
 
 h4.timer-times-mean {
@@ -192,8 +193,65 @@ h4.timer-times-avg {
   text-decoration: underline;
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 920px) {
   .logo {
     display: none;
+  }
+}
+
+@media screen and (max-width: 920px) and (orientation: landscape) {
+  .header {
+    flex-direction: column;
+  }
+
+  .header-buttons-container {
+    display: block;
+    margin: auto;
+  }
+
+  .header-buttons-container-top {
+    float: left;
+    margin-right: 10px;
+  }
+
+  .header-buttons-container > div {
+    flex: inherit;
+  }
+
+  .header-button {
+    min-width: 135px;
+    margin: 0 10px 0 0;
+  }
+
+  .header-button:last-child {
+    margin-right: 0;
+  }
+
+  .timer-text {
+    font-size: 15vw;
+  }
+}
+
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  .header {
+    flex-direction: column;
+  }
+
+  .header-buttons-container > div {
+    flex: inherit;
+    margin: auto;
+  }
+
+  .header-button {
+    min-width: 135px;
+  }
+
+  .timer {
+    flex-direction: column;
+  }
+
+  .timer-times-container {
+    width: 100%;
+    max-width: initial;
   }
 }
