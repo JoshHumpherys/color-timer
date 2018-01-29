@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
 
 scramble_NNN.js

@@ -51,10 +51,6 @@ export const getSolveStats = state => {
 
   const getLastNTimeObjs = (i, n) => i - (n - 1) >= 0 ? [...timeObjs].slice(i - (n - 1), i + 1) : [];
 
-  const getLastNTimes = (i, n) => getLastNTimeObjs(i, n).map(timeObj => timeObj.timeMillis);
-
-  const getLastNTimesSorted = (i, n) => getLastNTimes(i, n).sort((a, b) => a - b);
-
   const getMeanOfN = times => times.reduce((sum, time) => sum + time, 0) / times.length;
 
   const calculateMoN = n => {

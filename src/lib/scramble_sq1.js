@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
 
 scramble_sq1.js

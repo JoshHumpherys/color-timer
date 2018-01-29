@@ -137,13 +137,12 @@ class App extends Component {
     switch(penaltyType) {
       case penaltyTypes.NONE:
         return inspectionTimeRemaining.toString();
-        break;
       case penaltyTypes.PLUS_TWO:
         return '+2';
-        break;
       case penaltyTypes.DNF:
         return 'DNF';
-        break;
+      default:
+        return inspectionTimeRemaining.toString();
     }
   }
 
@@ -196,6 +195,10 @@ class App extends Component {
         case stateTypes.RUNNING:
             this.props.dispatch(stopTimer(now));
           break;
+        default:
+          console.trace();
+          // Should never reach this case
+          break;
       }
     } else if((!this.props.spacebarDown && prevProps.spacebarDown) || (!this.props.touchDown && prevProps.touchDown)) {
       switch(this.props.state) {
@@ -218,7 +221,12 @@ class App extends Component {
           }
           break;
         case stateTypes.RUNNING:
-          // Should never reach this state
+          console.trace();
+          // Should never reach this case
+          break;
+        default:
+          console.trace();
+          // Should never reach this case
           break;
       }
     }
@@ -232,6 +240,10 @@ class App extends Component {
           case penaltyTypes.PLUS_TWO:
           case penaltyTypes.DNF:
             this.props.dispatch(setCurrentPenaltyType(penaltyType));
+            break;
+          default:
+            // Should never reach this case
+            console.trace();
             break;
         }
       }
@@ -256,6 +268,10 @@ class App extends Component {
         } else {
           displayTime = this.getDisplayTime(Date.now() - this.props.runningStartTime);
         }
+        break;
+      default:
+        console.trace();
+        // Should never reach this case
         break;
     }
 
@@ -355,7 +371,7 @@ class App extends Component {
                       }}
                       autoFocus />
                   </div>
-                  <button className="ui button" role="button"onClick={this.createSession}>Create Session</button>
+                  <button className="ui button" onClick={this.createSession}>Create Session</button>
                 </div>
               </div>
               <br />
@@ -373,11 +389,11 @@ class App extends Component {
             </div>
           ),
           actions: [
-            <DeleteButton onClick={() => {
+            <DeleteButton key="deleteButton" onClick={() => {
               this.props.dispatch(deleteCurrentSession());
               this.props.dispatch(removeModal());
             }} />,
-            <SubmitButton onClick={() => this.props.dispatch(removeModal())} />
+            <SubmitButton key="submitButton" onClick={() => this.props.dispatch(removeModal())} />
           ]
         };
         break;
@@ -463,14 +479,14 @@ class App extends Component {
     return (
       <div className="app">
         <header className="header">
-          <img src={logo} className="logo" />
+          <img src={logo} className="logo" alt="logo" />
           <h1 className="scramble">{this.props.scramble}</h1>
           <div className="header-buttons-container">
             <div className="header-buttons-container-top">
-              <select className="header-button" onChange={e => this.setType(e.target.value)}>
+              <select className="header-button" onChange={e => this.setType(e.target.value)} value={this.props.type}>
                 {
                   getSolveTypeKeys().map(key =>
-                    <option key={key} value={key} selected={this.props.type === key ? 'selected' : ''}>
+                    <option key={key} value={key}>
                       {solveTypeToString(key)}
                     </option>
                   )
@@ -495,26 +511,28 @@ class App extends Component {
             this.props.showTimes ? (
               <div className="timer-times-container">
                 <table className="timer-times-table">
-                  <tr>
-                    <th />
-                    <th>Current</th>
-                    <th>Best</th>
-                  </tr>
-                  {
-                    Object.entries(this.props.bests).filter(([_, timeObj]) => timeObj).map(([ type, timeObj ]) => (
-                      <tr>
-                        <td>
-                          {type}
-                        </td>
-                        <td>
-                          {getCurrentStat(type)}
-                        </td>
-                        <td>
-                          {timeObj ? this.getDisplayTime(timeObj.timeMillis, timeObj.penaltyType) : ''}
-                        </td>
-                      </tr>
-                    ))
-                  }
+                  <tbody>
+                    <tr>
+                      <th />
+                      <th>Current</th>
+                      <th>Best</th>
+                    </tr>
+                    {
+                      Object.entries(this.props.bests).filter(([_, timeObj]) => timeObj).map(([ type, timeObj ]) => (
+                        <tr key={type}>
+                          <td>
+                            {type}
+                          </td>
+                          <td>
+                            {getCurrentStat(type)}
+                          </td>
+                          <td>
+                            {timeObj ? this.getDisplayTime(timeObj.timeMillis, timeObj.penaltyType) : ''}
+                          </td>
+                        </tr>
+                      ))
+                    }
+                  </tbody>
                 </table>
                 <h4 className="timer-times-mean">
                   Mean: {
@@ -532,43 +550,45 @@ class App extends Component {
                 }
                 </h4>
                 <table className="timer-times-table">
-                  <tr>
-                    <th>Solve</th>
-                    <th>Time</th>
-                    <th>Ao5</th>
-                    <th>Ao12</th>
-                  </tr>
-                  {
-                    this.props.solves.map((solve, i) => (
-                      <tr>
-                        <td>
-                          <span className="solve-number" onClick={() => {
-                            this.props.dispatch(createModal(modalTypes.SOLVE_MODAL));
-                            this.props.dispatch(setModalState({ solveNumber: i }));
-                          }}>
-                            {i + 1}
-                          </span>
-                        </td>
-                        <td>
-                          {this.getDisplayTime(solve.timeObj.timeMillis, solve.timeObj.penaltyType)}
-                        </td>
-                        <td>
-                          {
-                            solve.timeObj.ao5 ?
-                              this.getDisplayTime(solve.timeObj.ao5.timeMillis, solve.timeObj.ao5.penaltyType) : ''
-                          }
-                        </td>
-                        <td>
-                          {
-                            solve.timeObj.ao12 ? this.getDisplayTime(
-                              solve.timeObj.ao12.timeMillis,
-                              solve.timeObj.ao12.penaltyType
-                            ) : ''
-                          }
-                        </td>
-                      </tr>
-                    )).reverse()
-                  }
+                  <tbody>
+                    <tr>
+                      <th>Solve</th>
+                      <th>Time</th>
+                      <th>Ao5</th>
+                      <th>Ao12</th>
+                    </tr>
+                    {
+                      this.props.solves.map((solve, i) => (
+                        <tr key={'solve' + i}>
+                          <td>
+                            <span className="solve-number" onClick={() => {
+                              this.props.dispatch(createModal(modalTypes.SOLVE_MODAL));
+                              this.props.dispatch(setModalState({ solveNumber: i }));
+                            }}>
+                              {i + 1}
+                            </span>
+                          </td>
+                          <td>
+                            {this.getDisplayTime(solve.timeObj.timeMillis, solve.timeObj.penaltyType)}
+                          </td>
+                          <td>
+                            {
+                              solve.timeObj.ao5 ?
+                                this.getDisplayTime(solve.timeObj.ao5.timeMillis, solve.timeObj.ao5.penaltyType) : ''
+                            }
+                          </td>
+                          <td>
+                            {
+                              solve.timeObj.ao12 ? this.getDisplayTime(
+                                solve.timeObj.ao12.timeMillis,
+                                solve.timeObj.ao12.penaltyType
+                              ) : ''
+                            }
+                          </td>
+                        </tr>
+                      )).reverse()
+                    }
+                  </tbody>
                 </table>
               </div>
             ) : (

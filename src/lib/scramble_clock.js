@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 "use strict";
 if (typeof scramblers === "undefined") {
   var scramblers = {};

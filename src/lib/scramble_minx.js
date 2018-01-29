@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
 
 Program by Clément Gallet, based on earlier work by Jaap Scherphuis. Idea by Stefan Pochmann.
