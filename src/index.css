@@ -110,6 +110,7 @@ body {
   flex: 1;
   transition: background-color .1s;
   display: flex;
+  overflow: hidden;
 }
 
 .timer-times-container {
