@@ -21,6 +21,8 @@ import { solveTypeToString } from '../constants/solveTypeToString'
 const createNewSession = ({ type, name, number }) =>
   new Session(name || solveTypeToString(type) + ' Session ' + number, type);
 
+const getScramble = (scramblers, type) => scramblers[type].getRandomScramble().scramble_string;
+
 export default function timer(
   state = {
     type: '333',
@@ -68,7 +70,7 @@ export default function timer(
       return { ...state, type, sessions, currentSessionIndex };
     }
     case actionTypes.SCRAMBLE_GENERATED: {
-      return { ...state, scramble: state.scramblers[action.payload.type].getRandomScramble().scramble_string };
+      return { ...state, scramble: getScramble(state.scramblers, action.payload.type) };
     }
     case actionTypes.INSPECTION_STARTED: {
       let { timeObj, penaltyType } = state;
@@ -172,25 +174,6 @@ export default function timer(
       }
       return { ...state, sessions, currentSessionIndex };
     }
-    case actionTypes.SESSIONS_SET: {
-      let sessions = [...action.payload.sessions].map(session =>
-        new Session(session.name, session.type, session.solves.map(solve =>
-          new Solve(solve.scramble, new Time(solve.timeObj.timeMillis, solve.timeObj.penaltyType), solve.comment)
-        ))
-      );
-
-      let currentSessionIndex;
-      let index = sessions.findIndex(session => session.type === state.type);
-      if(index === -1) {
-        const number = sessions.filter(session => session.type === state.type).length + 1;
-        sessions = [...sessions, createNewSession({ type: state.type, number })];
-        currentSessionIndex = sessions.length - 1;
-      } else {
-        currentSessionIndex = index;
-      }
-
-      return { ...state, sessions, currentSessionIndex };
-    }
     case actionTypes.PENALTY_SET: {
       const { penaltyType, solveIndex } = action.payload;
       const sessions = [...state.sessions];
@@ -199,6 +182,22 @@ export default function timer(
       return {
         ...state,
         sessions
+      };
+    }
+    case actionTypes.FROM_LOCAL_STORAGE_INITTED: {
+      const { type, currentSessionIndex } = action.payload;
+      let sessions = [...action.payload.sessions].map(session =>
+          new Session(session.name, session.type, session.solves.map(solve =>
+              new Solve(solve.scramble, new Time(solve.timeObj.timeMillis, solve.timeObj.penaltyType), solve.comment)
+          ))
+      );
+
+      return {
+        ...state,
+        sessions,
+        type,
+        currentSessionIndex,
+        scramble: getScramble(state.scramblers, type)
       };
     }
     default: {

@@ -24,7 +24,10 @@ const store = createStore(
 
 store.subscribe(() =>  {
   // localStorage.setItem('sessions', JSON.stringify({ timer: { sessions: store.getState().timer.sessions } }));
-  localStorage.setItem('sessions', JSON.stringify(store.getState().timer.sessions));
+  const state = store.getState();
+  localStorage.setItem('sessions', JSON.stringify(state.timer.sessions));
+  localStorage.setItem('type', JSON.stringify(state.timer.type));
+  localStorage.setItem('currentSessionIndex', JSON.stringify(state.timer.currentSessionIndex));
 });
 
 const config = {

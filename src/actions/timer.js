@@ -60,10 +60,10 @@ export function deleteCurrentSession() {
   return { type: actionTypes.CURRENT_SESSION_DELETED  };
 }
 
-export function setSessions(sessions) {
-  return { type: actionTypes.SESSIONS_SET, payload: { sessions } };
-}
-
 export function setPenaltyType(penaltyType, solveIndex) {
   return { type: actionTypes.PENALTY_SET, payload: { penaltyType, solveIndex } };
+}
+
+export function initFromLocalStorage(sessions, type, currentSessionIndex) {
+  return { type: actionTypes.FROM_LOCAL_STORAGE_INITTED, payload: { sessions, type, currentSessionIndex } }
 }

@@ -16,8 +16,8 @@ import {
   createSession,
   switchSession,
   deleteCurrentSession,
-  setSessions,
-  setPenaltyType
+  setPenaltyType,
+  initFromLocalStorage
 } from './actions/timer'
 import { setDisplayMillis, setInspection, setHideSolveTime, setHoldTime, setShowTimes } from './actions/settings'
 import { createModal, removeModal, setModalState } from './actions/modal'
@@ -155,9 +155,11 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const sessions = localStorage.getItem('sessions');
-    if(sessions) {
-      this.props.dispatch(setSessions(JSON.parse(sessions)));
+    const sessions = JSON.parse(localStorage.getItem('sessions'));
+    const type = JSON.parse(localStorage.getItem('type'));
+    const currentSessionIndex = JSON.parse(localStorage.getItem('currentSessionIndex'));
+    if(sessions !== null && type !== null && currentSessionIndex !== null) {
+      this.props.dispatch(initFromLocalStorage(sessions, type, currentSessionIndex));
     }
     document.addEventListener('keydown', e => {
       if(e.keyCode === 32 && !this.props.spacebarDown) {
