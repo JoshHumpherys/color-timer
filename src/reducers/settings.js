@@ -26,6 +26,9 @@ export default function settings(
     case actionTypes.SHOW_TIMES_SET: {
       return { ...state, showTimes: action.payload.showTimes };
     }
+    case actionTypes.FROM_LOCAL_STORAGE_INITTED: {
+      return { ...state, ...action.payload.settings };
+    }
     default: {
       return state;
     }

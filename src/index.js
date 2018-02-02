@@ -28,6 +28,7 @@ store.subscribe(() =>  {
   localStorage.setItem('sessions', JSON.stringify(state.timer.sessions));
   localStorage.setItem('type', JSON.stringify(state.timer.type));
   localStorage.setItem('currentSessionIndex', JSON.stringify(state.timer.currentSessionIndex));
+  localStorage.setItem('settings', JSON.stringify(state.settings));
 });
 
 const config = {

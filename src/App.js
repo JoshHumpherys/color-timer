@@ -158,8 +158,9 @@ class App extends Component {
     const sessions = JSON.parse(localStorage.getItem('sessions'));
     const type = JSON.parse(localStorage.getItem('type'));
     const currentSessionIndex = JSON.parse(localStorage.getItem('currentSessionIndex'));
-    if(sessions !== null && type !== null && currentSessionIndex !== null) {
-      this.props.dispatch(initFromLocalStorage(sessions, type, currentSessionIndex));
+    const settings = JSON.parse(localStorage.getItem('settings'));
+    if(sessions !== null && type !== null && currentSessionIndex !== null && settings !== null) {
+      this.props.dispatch(initFromLocalStorage(sessions, type, currentSessionIndex, settings));
     }
     document.addEventListener('keydown', e => {
       if(e.keyCode === 32 && !this.props.spacebarDown) {

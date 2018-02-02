@@ -64,6 +64,6 @@ export function setPenaltyType(penaltyType, solveIndex) {
   return { type: actionTypes.PENALTY_SET, payload: { penaltyType, solveIndex } };
 }
 
-export function initFromLocalStorage(sessions, type, currentSessionIndex) {
-  return { type: actionTypes.FROM_LOCAL_STORAGE_INITTED, payload: { sessions, type, currentSessionIndex } }
+export function initFromLocalStorage(sessions, type, currentSessionIndex, settings) {
+  return { type: actionTypes.FROM_LOCAL_STORAGE_INITTED, payload: { sessions, type, currentSessionIndex, settings } };
 }
