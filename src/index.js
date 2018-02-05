@@ -29,6 +29,7 @@ store.subscribe(() =>  {
   localStorage.setItem('type', JSON.stringify(state.timer.type));
   localStorage.setItem('currentSessionIndex', JSON.stringify(state.timer.currentSessionIndex));
   localStorage.setItem('settings', JSON.stringify(state.settings));
+  localStorage.setItem('colors', JSON.stringify(state.timer.colors));
 });
 
 const config = {

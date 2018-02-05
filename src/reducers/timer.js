@@ -198,7 +198,7 @@ export default function timer(
       return { ...state, colors: action.payload.colors };
     }
     case actionTypes.FROM_LOCAL_STORAGE_INITTED: {
-      const { type, currentSessionIndex } = action.payload;
+      const { type, currentSessionIndex, colors } = action.payload;
       let sessions = [...action.payload.sessions].map(session =>
           new Session(session.name, session.type, session.solves.map(solve =>
               new Solve(solve.scramble, new Time(solve.timeObj.timeMillis, solve.timeObj.penaltyType), solve.comment)
@@ -210,7 +210,8 @@ export default function timer(
         sessions,
         type,
         currentSessionIndex,
-        scramble: getScramble(state.scramblers, type)
+        scramble: getScramble(state.scramblers, type),
+        colors
       };
     }
     default: {

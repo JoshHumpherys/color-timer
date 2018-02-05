@@ -68,6 +68,9 @@ export function setColors(colors) {
   return { type: actionTypes.COLORS_SET, payload: { colors } };
 }
 
-export function initFromLocalStorage(sessions, type, currentSessionIndex, settings) {
-  return { type: actionTypes.FROM_LOCAL_STORAGE_INITTED, payload: { sessions, type, currentSessionIndex, settings } };
+export function initFromLocalStorage(sessions, type, currentSessionIndex, settings, colors) {
+  return {
+    type: actionTypes.FROM_LOCAL_STORAGE_INITTED,
+    payload: { sessions, type, currentSessionIndex, settings, colors }
+  };
 }

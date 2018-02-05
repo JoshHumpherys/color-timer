@@ -161,8 +161,9 @@ class App extends Component {
     const type = JSON.parse(localStorage.getItem('type'));
     const currentSessionIndex = JSON.parse(localStorage.getItem('currentSessionIndex'));
     const settings = JSON.parse(localStorage.getItem('settings'));
-    if(sessions !== null && type !== null && currentSessionIndex !== null && settings !== null) {
-      this.props.dispatch(initFromLocalStorage(sessions, type, currentSessionIndex, settings));
+    const colors = JSON.parse(localStorage.getItem('colors'));
+    if(sessions !== null && type !== null && currentSessionIndex !== null && settings !== null && colors !== null) {
+      this.props.dispatch(initFromLocalStorage(sessions, type, currentSessionIndex, settings, colors));
     }
     document.addEventListener('keydown', e => {
       if(e.keyCode === 32 && !this.props.spacebarDown) {
@@ -305,7 +306,7 @@ class App extends Component {
       { title: 'Timer text color', key: 'backgroundText' }
     ];
 
-    // TODO move this to another file?
+    // TODO move this to another file
     let modalContents;
     switch(this.props.modalType) {
       case modalTypes.SETTINGS_MODAL:
