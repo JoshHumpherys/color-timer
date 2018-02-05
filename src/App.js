@@ -34,6 +34,7 @@ import {
   getTimerJustStopped,
   getTimeObj,
   getPenaltyType,
+  getColors,
   getCurrentSessions,
   getCurrentSessionIndex,
   getSolveStats
@@ -484,14 +485,23 @@ class App extends Component {
       }
     };
 
+    const buttonStyle = { backgroundColor: this.props.colors.buttons, color: this.props.colors.buttonsText };
+    const topBarStyle = { backgroundColor: this.props.colors.topBar, color: this.props.colors.topBarText };
+    const sideBarStyle = { backgroundColor: this.props.colors.sideBar, color: this.props.colors.sideBarText };
+    const backgroundStyle = { backgroundColor: this.props.colors.background, color: this.props.colors.backgroundText };
+
     return (
       <div className="app">
-        <header className="header">
+        <header className="header" style={topBarStyle}>
           <img src={logo} className="logo" alt="logo" />
           <h1 className="scramble">{this.props.scramble}</h1>
           <div className="header-buttons-container">
             <div className="header-buttons-container-top">
-              <select className="header-button" onChange={e => this.setType(e.target.value)} value={this.props.type}>
+              <select
+                className="header-button"
+                onChange={e => this.setType(e.target.value)}
+                value={this.props.type}
+                style={buttonStyle}>
                 {
                   getSolveTypeKeys().map(key =>
                     <option key={key} value={key}>
@@ -500,24 +510,24 @@ class App extends Component {
                   )
                 }
               </select>
-              <button className="header-button centered-text" onClick={e => this.generateScramble(this.props.type)}>
-                Next
-              </button>
+              <button className="header-button centered-text" onClick={
+                () => this.generateScramble(this.props.type)
+              } style={buttonStyle}>Next</button>
             </div>
             <div className="header-buttons-container-bottom">
               <button className="header-button centered-text" onClick={
                 () => this.props.dispatch(createModal(modalTypes.SESSIONS_MODAL))
-              }>Sessions</button>
+              } style={buttonStyle}>Sessions</button>
               <button className="header-button centered-text" onClick={
                 () => this.props.dispatch(createModal(modalTypes.SETTINGS_MODAL))
-              }>Settings</button>
+              } style={buttonStyle}>Settings</button>
             </div>
           </div>
         </header>
         <div className={'timer' + (this.isReady(now) ? ' ready' : '')}>
           {
             this.props.showTimes ? (
-              <div className="timer-times-container">
+              <div className="timer-times-container" style={sideBarStyle}>
                 <table className="timer-times-table">
                   <tbody>
                     <tr>
@@ -605,7 +615,8 @@ class App extends Component {
           }
           <div
             ref={timerTextContainer => this.timerTextContainer = timerTextContainer}
-            className="timer-text-container">
+            className="timer-text-container"
+            style={this.isReady(now) ? {} : backgroundStyle}> {/* TODO fix animation */}
             <p className={displayTimeDivClassName}>
               {displayTime}
             </p>
@@ -645,6 +656,7 @@ export default connect(
       timerJustStopped: getTimerJustStopped(state),
       timeObj: getTimeObj(state),
       penaltyType: getPenaltyType(state),
+      colors: getColors(state),
       sessions: getCurrentSessions(state),
       currentSessionIndex: getCurrentSessionIndex(state),
       bests: solveStats.bests,

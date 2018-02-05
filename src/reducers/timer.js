@@ -48,6 +48,16 @@ export default function timer(
     timerJustStopped: false,
     timeObj: new Time(0),
     penaltyType: penaltyTypes.NONE,
+    colors: {
+      sideBar: '#55F',
+      sideBarText: '#FFF',
+      topBar: '#1E90FF',
+      topBarText: '#FFF',
+      buttons: '#0DD',
+      buttonsText: '#FFF',
+      background: '#FFF',
+      backgroundText: '#000'
+    },
     sessions: [
       new Session('3x3x3 Session 1', '333')
     ],

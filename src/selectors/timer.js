@@ -13,6 +13,7 @@ export const getTouchDown = state => state.timer.touchDown;
 export const getTimerJustStopped = state => state.timer.timerJustStopped;
 export const getTimeObj = state => state.timer.timeObj;
 export const getPenaltyType = state => state.timer.penaltyType;
+export const getColors = state => state.timer.colors;
 export const getCurrentSessions = state =>
   state.timer.sessions.filter(session => session.type === state.timer.type);
 export const getCurrentSessionIndex = state =>
