@@ -49,14 +49,14 @@ export default function timer(
     timeObj: new Time(0),
     penaltyType: penaltyTypes.NONE,
     colors: {
-      sideBar: '#55F',
-      sideBarText: '#FFF',
+      sideBar: '#555FFF',
+      sideBarText: '#FFFFFF',
       topBar: '#1E90FF',
-      topBarText: '#FFF',
-      buttons: '#0DD',
-      buttonsText: '#FFF',
-      background: '#FFF',
-      backgroundText: '#000'
+      topBarText: '#FFFFFF',
+      buttons: '#00DDDD',
+      buttonsText: '#FFFFFF',
+      background: '#FFFFFF',
+      backgroundText: '#000000'
     },
     sessions: [
       new Session('3x3x3 Session 1', '333')
@@ -193,6 +193,9 @@ export default function timer(
         ...state,
         sessions
       };
+    }
+    case actionTypes.COLORS_SET: {
+      return { ...state, colors: action.payload.colors };
     }
     case actionTypes.FROM_LOCAL_STORAGE_INITTED: {
       const { type, currentSessionIndex } = action.payload;

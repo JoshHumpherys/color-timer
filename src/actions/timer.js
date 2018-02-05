@@ -64,6 +64,10 @@ export function setPenaltyType(penaltyType, solveIndex) {
   return { type: actionTypes.PENALTY_SET, payload: { penaltyType, solveIndex } };
 }
 
+export function setColors(colors) {
+  return { type: actionTypes.COLORS_SET, payload: { colors } };
+}
+
 export function initFromLocalStorage(sessions, type, currentSessionIndex, settings) {
   return { type: actionTypes.FROM_LOCAL_STORAGE_INITTED, payload: { sessions, type, currentSessionIndex, settings } };
 }

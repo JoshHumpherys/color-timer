@@ -17,6 +17,7 @@ import {
   switchSession,
   deleteCurrentSession,
   setPenaltyType,
+  setColors,
   initFromLocalStorage
 } from './actions/timer'
 import { setDisplayMillis, setInspection, setHideSolveTime, setHoldTime, setShowTimes } from './actions/settings'
@@ -293,6 +294,17 @@ class App extends Component {
       displayTimeDivClassName += ' timer-text-medium';
     }
 
+    const colors = [
+      { title: 'Top bar background color', key: 'topBar' },
+      { title: 'Top bar text color', key: 'topBarText' },
+      { title: 'Side bar background color', key: 'sideBar' },
+      { title: 'Side bar text color', key: 'sideBarText' },
+      { title: 'Buttons background color', key: 'buttons' },
+      { title: 'Buttons text color', key: 'buttonsText' },
+      { title: 'Timer background color', key: 'background' },
+      { title: 'Timer text color', key: 'backgroundText' }
+    ];
+
     // TODO move this to another file?
     let modalContents;
     switch(this.props.modalType) {
@@ -354,6 +366,23 @@ class App extends Component {
                   onChange={(e, data) => this.props.dispatch(setHoldTime(data.value))}
                 />
               </div>
+              {
+                colors.map(color => (
+                  <div key={color.key}>
+                    <br />
+                    <div>
+                      <h4>{color.title}</h4>
+                      <input
+                        type="color"
+                        value={this.props.colors[color.key]}
+                        onChange={
+                          e => this.props.dispatch(setColors({ ...this.props.colors, [color.key]: e.target.value }))
+                        }
+                      />
+                    </div>
+                  </div>
+                ))
+              }
             </div>
           ),
           actions: <SubmitButton onClick={() => this.props.dispatch(removeModal())} />
