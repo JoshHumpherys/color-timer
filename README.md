@@ -7,7 +7,8 @@ Color Timer is a browser-based timer for speedcubers to record solve times and p
 ## Current Features
 - Scrambles several different puzzle types
 - Records solves times
-- Saves solve times for future browser sessions
+- Saves solve times and settings across browser sessions
+- Supports WCA inspection
 - Supports +2 and DNF for each solve
 - Supports creating, deleting, and switching sessions
 - Separates sessions by solve type
