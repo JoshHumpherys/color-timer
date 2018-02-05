@@ -165,11 +165,16 @@ class App extends Component {
     document.addEventListener('keydown', e => {
       if(e.keyCode === 32 && !this.props.spacebarDown) {
         this.props.dispatch(setSpacebarIsDown(true));
+        e.preventDefault();
+      } else if(this.props.state === stateTypes.RUNNING) {
+        this.props.dispatch(stopTimer(Date.now()));
+        e.preventDefault();
       }
     });
     document.addEventListener('keyup', e => {
       if(e.keyCode === 32 && this.props.spacebarDown) {
         this.props.dispatch(setSpacebarIsDown(false));
+        e.preventDefault();
       }
     });
     this.timerTextContainer.addEventListener('touchstart', e => {
