@@ -68,6 +68,8 @@ body {
 
 .header-button {
   max-width: 135px;
+  min-width: 135px;
+  min-height: 30px;
   flex: 1;
   color: white;
   background-color: #0dd;
