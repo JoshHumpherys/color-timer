@@ -527,6 +527,9 @@ class App extends Component {
           <h1 className="scramble">{this.props.scramble}</h1>
           <div className="header-buttons-container">
             <div className="header-buttons-container-top">
+              <button className="header-button centered-text" onClick={
+                () => alert('TODO export solves')
+              } style={buttonStyle}>Export</button>
               <select
                 className="header-button"
                 onChange={e => this.setType(e.target.value)}
@@ -545,6 +548,9 @@ class App extends Component {
               } style={buttonStyle}>Next</button>
             </div>
             <div className="header-buttons-container-bottom">
+              <button className="header-button centered-text" onClick={
+                () => alert('TODO import solves')
+              } style={buttonStyle}>Import</button>
               <button className="header-button centered-text" onClick={
                 () => this.props.dispatch(createModal(modalTypes.SESSIONS_MODAL))
               } style={buttonStyle}>Sessions</button>
