@@ -46,9 +46,10 @@ import * as stateTypes from './constants/stateTypes'
 import * as holdTimeTypes from './constants/holdTimeTypes'
 import * as penaltyTypes from './constants/penaltyTypes'
 import * as modalTypes from './constants/modalTypes'
+import { solveTypeToString, getSolveTypeKeys } from './constants/solveTypeToString'
 import logo from './img/logo.png';
 
-import { solveTypeToString, getSolveTypeKeys } from './constants/solveTypeToString'
+import BarChart from 'barchart'
 
 // TODO move these to a constants file?
 const holdTimes = {
@@ -94,6 +95,7 @@ class App extends Component {
     this.getDisplayTime = this.getDisplayTime.bind(this);
     this.isReady = this.isReady.bind(this);
     this.createSession = this.createSession.bind(this);
+    this.updateBarChart = this.updateBarChart.bind(this);
   }
 
   setType(type) {
@@ -156,6 +158,20 @@ class App extends Component {
     this.props.dispatch(createSession(this.newSessionInputField.value));
   }
 
+  updateBarChart() {
+    this.state.bc.maximum = this.props.solves.length; // TODO don't mutate state
+    this.state.bc.data([[
+        { name: '2:30-2:50', value: 0 },
+        { name: '11-12', value: 0 },
+        { name: '13-14', value: 10 },
+        { name: '15-16', value: 0 },
+        { name: '17-18', value: this.props.solves.length },
+        { name: '19-20', value: 0 },
+        { name: '21-22', value: 0 }
+      ]]
+    );
+  }
+
   componentDidMount() {
     const sessions = JSON.parse(localStorage.getItem('sessions'));
     const type = JSON.parse(localStorage.getItem('type'));
@@ -188,6 +204,20 @@ class App extends Component {
       this.props.dispatch(setTouchDown(false));
       e.preventDefault();
     });
+
+    const bc = new BarChart({
+      barColors: [this.props.colors.buttons],
+      labelTopColors: ['#FFF'],
+      labelInsideColors: ['#FFF'],
+      autoScale: true,
+      chartPadding: 20,
+      minimum: 0,
+      maximum: 0,
+      container: document.getElementById('chart-container')
+    });
+
+    this.setState({ bc });
+
     setInterval(this.forceUpdate.bind(this), 20);
   }
 
@@ -258,6 +288,9 @@ class App extends Component {
             break;
         }
       }
+    }
+    if(this.props.solves.length !== prevProps.solves.length) {
+      this.updateBarChart();
     }
   }
 
@@ -564,6 +597,7 @@ class App extends Component {
           {
             this.props.showTimes ? (
               <div className="timer-times-container" style={sideBarStyle}>
+                <div id="chart-container" />
                 <table className="timer-times-table">
                   <tbody>
                     <tr>

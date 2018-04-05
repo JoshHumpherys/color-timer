@@ -120,6 +120,8 @@ body {
   max-width: 300px;
   background-color: #55f;
   overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 5px;
   color: #FFF;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, .3);
   z-index: 1;
