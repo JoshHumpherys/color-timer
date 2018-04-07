@@ -90,11 +90,14 @@ class App extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {};
+
     this.setType = this.setType.bind(this);
     this.generateScramble = this.generateScramble.bind(this);
     this.getDisplayTime = this.getDisplayTime.bind(this);
     this.isReady = this.isReady.bind(this);
     this.createSession = this.createSession.bind(this);
+    this.createBarChart = this.createBarChart.bind(this);
     this.updateBarChart = this.updateBarChart.bind(this);
   }
 
@@ -158,18 +161,58 @@ class App extends Component {
     this.props.dispatch(createSession(this.newSessionInputField.value));
   }
 
+  createBarChart() {
+    console.log('creating bar chart');
+    const container = document.getElementById('chart-container');
+    while(container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
+    return new BarChart({
+      barColors: [this.props.colors.buttons],
+      labelTopColors: ['#FFF'],
+      labelInsideColors: ['#FFF'],
+      autoScale: true,
+      chartPadding: 20,
+      minimum: 0,
+      maximum: 0,
+      container
+    });
+  }
+
   updateBarChart() {
-    this.state.bc.maximum = this.props.solves.length; // TODO don't mutate state
-    this.state.bc.data([[
-        { name: '2:30-2:50', value: 0 },
-        { name: '11-12', value: 0 },
-        { name: '13-14', value: 10 },
-        { name: '15-16', value: 0 },
-        { name: '17-18', value: this.props.solves.length },
-        { name: '19-20', value: 0 },
-        { name: '21-22', value: 0 }
-      ]]
-    );
+    const std = this.props.std.timeMillis / 1000 || 1;
+    const step = Math.max(Math.floor(std), 1);
+    const mean = Math.floor(this.props.mean.timeMillis / 1000) || 1;
+    const start = Math.max(mean, 3 * step);
+    let { bc } = this.state;
+    if(bc === undefined || this.state.lastStep !== step || this.state.lastStart !== start) {
+      bc = this.createBarChart();
+      this.setState({ lastStep: step, lastStart: start, bc });
+    }
+    const categories = [];
+    for(let i = -3; i <= 3; i++) {
+      categories.push(start + step * i);
+    }
+    console.log(categories);
+
+    let largestCategoryCount = 0;
+    const data = categories.map(category => {
+      const count = this.props.solves.filter(solve => {
+        const solveTime = solve.timeObj.timeMillis / 1000;
+        return solveTime >= category && solveTime < category + step;
+      }).length;
+      largestCategoryCount = Math.max(largestCategoryCount, count);
+      return {
+        name: category + '-' + (category + step),
+        value: count
+      };
+    });
+
+    console.log(data);
+
+    bc.maximum = Math.floor(largestCategoryCount * 2); // TODO don't mutate state
+
+    bc.data([data]);
   }
 
   componentDidMount() {
@@ -205,18 +248,9 @@ class App extends Component {
       e.preventDefault();
     });
 
-    const bc = new BarChart({
-      barColors: [this.props.colors.buttons],
-      labelTopColors: ['#FFF'],
-      labelInsideColors: ['#FFF'],
-      autoScale: true,
-      chartPadding: 20,
-      minimum: 0,
-      maximum: 0,
-      container: document.getElementById('chart-container')
-    });
+    // const bc = this.createBarChart();
 
-    this.setState({ bc });
+    // this.setState({ bc });
 
     setInterval(this.forceUpdate.bind(this), 20);
   }
