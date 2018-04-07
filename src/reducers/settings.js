@@ -4,7 +4,7 @@ import * as holdTimeTypes from '../constants/holdTimeTypes'
 export default function settings(
   state = {
     inspection: false,
-    holdTime: holdTimeTypes.THREE_TENTHS_SECOND,
+    holdTime: holdTimeTypes.NONE,
     displayMillis: false,
     hideSolveTime: false,
     showTimes: true

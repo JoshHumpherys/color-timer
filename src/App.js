@@ -97,8 +97,10 @@ class App extends Component {
     this.getDisplayTime = this.getDisplayTime.bind(this);
     this.isReady = this.isReady.bind(this);
     this.createSession = this.createSession.bind(this);
+    this.removeBarChart = this.removeBarChart.bind(this);
     this.createBarChart = this.createBarChart.bind(this);
     this.updateBarChart = this.updateBarChart.bind(this);
+    this.getChartTime = this.getChartTime.bind(this);
   }
 
   setType(type) {
@@ -161,12 +163,18 @@ class App extends Component {
     this.props.dispatch(createSession(this.newSessionInputField.value));
   }
 
-  createBarChart() {
-    console.log('creating bar chart');
+  removeBarChart() {
     const container = document.getElementById('chart-container');
-    while(container.firstChild) {
-      container.removeChild(container.firstChild);
+    if(container) {
+      while(container.firstChild) {
+        container.removeChild(container.firstChild);
+      }
     }
+    this.setState({ bc: undefined });
+  }
+
+  createBarChart() {
+    this.removeBarChart();
     return new BarChart({
       barColors: [this.props.colors.buttons],
       labelTopColors: ['#FFF'],
@@ -175,25 +183,50 @@ class App extends Component {
       chartPadding: 20,
       minimum: 0,
       maximum: 0,
-      container
+      container: document.getElementById('chart-container')
     });
   }
 
+  getChartTime(time) {
+    if(time === undefined) return 0;
+    if(isNaN(time)) return 0;
+    const secs = Math.floor(time) % 60;
+    const mins = Math.floor(time / 60) % 60;
+    const hrs = Math.floor(time / 60 / 60);
+    const getComponent = time => ((time < 10) ? '0' + time : time.toString()).slice(0, 2);
+    return (
+      (hrs !== 0 ? hrs + ':' : '') +
+      (mins !== 0 || hrs !== 0 ? (hrs !== 0 ? getComponent(mins) : mins) + ':' : '') +
+      (mins !== 0 || hrs !== 0 ? getComponent(secs) : secs)
+    );
+  }
+
   updateBarChart() {
+    if(this.props.solves.length === 0) {
+      this.removeBarChart();
+      return;
+    }
     const std = this.props.std.timeMillis / 1000 || 1;
-    const step = Math.max(Math.floor(std), 1);
-    const mean = Math.floor(this.props.mean.timeMillis / 1000) || 1;
-    const start = Math.max(mean, 3 * step);
+    const flooredStd = Math.floor(std);
+    let step, mean;
+    if(flooredStd < 5) {
+      step = Math.max(flooredStd, 1);
+      mean = Math.floor(this.props.mean.timeMillis / 1000) || 1;
+    } else {
+      step = 5 * Math.floor(flooredStd / 5);
+      mean = (step * Math.floor(this.props.mean.timeMillis / 1000 / step)) || 1;
+    }
+    const numPartitions = step === 1 ? 4 : 3;
+    const start = Math.max(mean, numPartitions * step);
     let { bc } = this.state;
     if(bc === undefined || this.state.lastStep !== step || this.state.lastStart !== start) {
       bc = this.createBarChart();
       this.setState({ lastStep: step, lastStart: start, bc });
     }
     const categories = [];
-    for(let i = -3; i <= 3; i++) {
+    for(let i = -numPartitions; i <= numPartitions; i++) {
       categories.push(start + step * i);
     }
-    console.log(categories);
 
     let largestCategoryCount = 0;
     const data = categories.map(category => {
@@ -203,14 +236,14 @@ class App extends Component {
       }).length;
       largestCategoryCount = Math.max(largestCategoryCount, count);
       return {
-        name: category + '-' + (category + step),
+        name: this.getChartTime(category) + (step === 1 ? '' : '-' + (this.getChartTime(category + step))),
         value: count
       };
     });
 
     console.log(data);
 
-    bc.maximum = Math.floor(largestCategoryCount * 2); // TODO don't mutate state
+    bc.maximum = Math.max(Math.floor(largestCategoryCount * 1.5), 2); // TODO don't mutate state
 
     bc.data([data]);
   }
@@ -247,10 +280,6 @@ class App extends Component {
       this.props.dispatch(setTouchDown(false));
       e.preventDefault();
     });
-
-    // const bc = this.createBarChart();
-
-    // this.setState({ bc });
 
     setInterval(this.forceUpdate.bind(this), 20);
   }
@@ -323,7 +352,11 @@ class App extends Component {
         }
       }
     }
-    if(this.props.solves.length !== prevProps.solves.length) {
+    if(!this.props.showTimes && prevProps.showTimes) {
+      this.removeBarChart();
+    }
+    if((this.props.solves.length !== prevProps.solves.length && this.props.showTimes) || (
+      this.props.showTimes && !prevProps.showTimes)) {
       this.updateBarChart();
     }
   }
