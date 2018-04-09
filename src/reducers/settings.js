@@ -7,7 +7,7 @@ export default function settings(
     holdTime: holdTimeTypes.NONE,
     displayMillis: false,
     hideSolveTime: false,
-    showTimes: true
+    showTimes: window.innerWidth > 768
   },
   action) {
   switch (action.type) {
@@ -27,7 +27,7 @@ export default function settings(
       return { ...state, showTimes: action.payload.showTimes };
     }
     case actionTypes.FROM_LOCAL_STORAGE_INITTED: {
-      return { ...state, ...action.payload.settings };
+      return { ...state, ...action.payload.settings, showTimes: state.showTimes };
     }
     default: {
       return state;

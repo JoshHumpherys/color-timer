@@ -626,34 +626,44 @@ class App extends Component {
           <img src={logo} className="logo" alt="logo" />
           <h1 className="scramble">{this.props.scramble}</h1>
           <div className="header-buttons-container">
+            {/* TODO move these to a separate settings page
+              <div className="header-buttons-container-top">
+                <button className="header-button centered-text" onClick={
+                  () => alert('TODO export solves')
+                } style={buttonStyle}>Export</button>
+                <select
+                  className="header-button"
+                  onChange={e => this.setType(e.target.value)}
+                  value={this.props.type}
+                  style={buttonStyle}>
+                  {
+                    getSolveTypeKeys().map(key =>
+                      <option key={key} value={key}>
+                        {solveTypeToString(key)}
+                      </option>
+                    )
+                  }
+                </select>
+                <button className="header-button centered-text" onClick={
+                  () => this.generateScramble(this.props.type)
+                } style={buttonStyle}>Next</button>
+              </div>
+              <div className="header-buttons-container-bottom">
+                <button className="header-button centered-text" onClick={
+                  () => alert('TODO import solves')
+                } style={buttonStyle}>Import</button>
+                <button className="header-button centered-text" onClick={
+                  () => this.props.dispatch(createModal(modalTypes.SESSIONS_MODAL))
+                } style={buttonStyle}>Sessions</button>
+                <button className="header-button centered-text" onClick={
+                  () => this.props.dispatch(createModal(modalTypes.SETTINGS_MODAL))
+                } style={buttonStyle}>Settings</button>
+              </div>
+            */}
             <div className="header-buttons-container-top">
-              <button className="header-button centered-text" onClick={
-                () => alert('TODO export solves')
-              } style={buttonStyle}>Export</button>
-              <select
-                className="header-button"
-                onChange={e => this.setType(e.target.value)}
-                value={this.props.type}
-                style={buttonStyle}>
-                {
-                  getSolveTypeKeys().map(key =>
-                    <option key={key} value={key}>
-                      {solveTypeToString(key)}
-                    </option>
-                  )
-                }
-              </select>
               <button className="header-button centered-text" onClick={
                 () => this.generateScramble(this.props.type)
               } style={buttonStyle}>Next</button>
-            </div>
-            <div className="header-buttons-container-bottom">
-              <button className="header-button centered-text" onClick={
-                () => alert('TODO import solves')
-              } style={buttonStyle}>Import</button>
-              <button className="header-button centered-text" onClick={
-                () => this.props.dispatch(createModal(modalTypes.SESSIONS_MODAL))
-              } style={buttonStyle}>Sessions</button>
               <button className="header-button centered-text" onClick={
                 () => this.props.dispatch(createModal(modalTypes.SETTINGS_MODAL))
               } style={buttonStyle}>Settings</button>
