@@ -4,9 +4,12 @@ import './index.css';
 import App from './App';
 import { Provider } from 'react-redux'
 import { createStore, compose } from 'redux'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 import rootReducer from './reducers/rootReducer'
 import * as firebase from 'firebase'
 import registerServiceWorker from './registerServiceWorker'
+
+import SettingsPage from './SettingsPage'
 
 const middleware = compose(
   window.devToolsExtension ? window.devToolsExtension() : f => f
@@ -44,7 +47,12 @@ firebase.initializeApp(config);
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <Router>
+      <span>
+        <Route exact path="/" component={App} />
+        <Route path="/settings" component={SettingsPage} />
+      </span>
+    </Router>
   </Provider>,
   document.getElementById('root')
 );
