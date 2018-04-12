@@ -4,29 +4,24 @@ import './index.css';
 import App from './App';
 import { Provider } from 'react-redux'
 import { createStore, compose } from 'redux'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { Router, Route, browserHistory } from 'react-router'
 import rootReducer from './reducers/rootReducer'
 import * as firebase from 'firebase'
 import registerServiceWorker from './registerServiceWorker'
 
 import SettingsPage from './SettingsPage'
+import {initFromLocalStorage} from "./actions/timer";
 
 const middleware = compose(
   window.devToolsExtension ? window.devToolsExtension() : f => f
 );
 
-// TODO use persisted state with createStore
-// const sessions = localStorage.getItem('sessions');
-// const persistedState = sessions ? JSON.parse(sessions) : {};
-
 const store = createStore(
   rootReducer,
-  // persistedState,
   middleware
 );
 
 store.subscribe(() =>  {
-  // localStorage.setItem('sessions', JSON.stringify({ timer: { sessions: store.getState().timer.sessions } }));
   const state = store.getState();
   localStorage.setItem('sessions', JSON.stringify(state.timer.sessions));
   localStorage.setItem('type', JSON.stringify(state.timer.type));
@@ -45,9 +40,18 @@ const config = {
 };
 firebase.initializeApp(config);
 
+const sessions = JSON.parse(localStorage.getItem('sessions'));
+const type = JSON.parse(localStorage.getItem('type'));
+const currentSessionIndex = JSON.parse(localStorage.getItem('currentSessionIndex'));
+const settings = JSON.parse(localStorage.getItem('settings'));
+const colors = JSON.parse(localStorage.getItem('colors'));
+if(sessions !== null && type !== null && currentSessionIndex !== null && settings !== null && colors !== null) {
+  store.dispatch(initFromLocalStorage(sessions, type, currentSessionIndex, settings, colors));
+}
+
 ReactDOM.render(
   <Provider store={store}>
-    <Router>
+    <Router history={browserHistory}>
       <span>
         <Route exact path="/" component={App} />
         <Route path="/settings" component={SettingsPage} />

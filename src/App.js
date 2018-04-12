@@ -17,8 +17,7 @@ import {
   switchSession,
   deleteCurrentSession,
   setPenaltyType,
-  setColors,
-  initFromLocalStorage
+  setColors
 } from './actions/timer'
 import { setDisplayMillis, setInspection, setHideSolveTime, setHoldTime, setShowTimes } from './actions/settings'
 import { createModal, removeModal, setModalState } from './actions/modal'
@@ -47,7 +46,10 @@ import * as holdTimeTypes from './constants/holdTimeTypes'
 import * as penaltyTypes from './constants/penaltyTypes'
 import * as modalTypes from './constants/modalTypes'
 import { solveTypeToString, getSolveTypeKeys } from './constants/solveTypeToString'
-import logo from './img/logo.png';
+import logo from './img/logo.png'
+import { browserHistory } from 'react-router'
+
+import Navbar from './Navbar'
 
 import BarChart from 'barchart'
 
@@ -96,7 +98,6 @@ class App extends Component {
     this.generateScramble = this.generateScramble.bind(this);
     this.getDisplayTime = this.getDisplayTime.bind(this);
     this.isReady = this.isReady.bind(this);
-    this.createSession = this.createSession.bind(this);
     this.removeBarChart = this.removeBarChart.bind(this);
     this.createBarChart = this.createBarChart.bind(this);
     this.updateBarChart = this.updateBarChart.bind(this);
@@ -157,10 +158,6 @@ class App extends Component {
 
   isReady(now) {
     return this.props.holdingStartTime !== null && now - this.props.holdingStartTime >= this.props.holdTime * 1000;
-  }
-
-  createSession() {
-    this.props.dispatch(createSession(this.newSessionInputField.value));
   }
 
   removeBarChart() {
@@ -249,14 +246,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const sessions = JSON.parse(localStorage.getItem('sessions'));
-    const type = JSON.parse(localStorage.getItem('type'));
-    const currentSessionIndex = JSON.parse(localStorage.getItem('currentSessionIndex'));
-    const settings = JSON.parse(localStorage.getItem('settings'));
-    const colors = JSON.parse(localStorage.getItem('colors'));
-    if(sessions !== null && type !== null && currentSessionIndex !== null && settings !== null && colors !== null) {
-      this.props.dispatch(initFromLocalStorage(sessions, type, currentSessionIndex, settings, colors));
-    }
     document.addEventListener('keydown', e => {
       if(e.keyCode === 32 && !this.props.spacebarDown) {
         this.props.dispatch(setSpacebarIsDown(true));
@@ -622,7 +611,7 @@ class App extends Component {
 
     return (
       <div className="app">
-        <header className="header" style={topBarStyle}>
+        <Navbar>
           <img src={logo} className="logo" alt="logo" />
           <h1 className="scramble">{this.props.scramble}</h1>
           <div className="header-buttons-container">
@@ -665,11 +654,11 @@ class App extends Component {
                 () => this.generateScramble(this.props.type)
               } style={buttonStyle}>Next</button>
               <button className="header-button centered-text" onClick={
-                () => this.props.dispatch(createModal(modalTypes.SETTINGS_MODAL))
+                () => browserHistory.push('/settings')
               } style={buttonStyle}>Settings</button>
             </div>
           </div>
-        </header>
+        </Navbar>
         <div className={'timer' + (this.isReady(now) ? ' ready' : '')}>
           {
             this.props.showTimes ? (

@@ -171,6 +171,15 @@ h4.timer-times-avg {
   font-size: 15vw;
 }
 
+.settings {
+  width: 70%;
+  margin: 20px auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
 ::-webkit-scrollbar {
   width: 10px;
 }
