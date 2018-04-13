@@ -102,6 +102,10 @@ class App extends Component {
     this.createBarChart = this.createBarChart.bind(this);
     this.updateBarChart = this.updateBarChart.bind(this);
     this.getChartTime = this.getChartTime.bind(this);
+    this.keyDownHandler = this.keyDownHandler.bind(this);
+    this.keyUpHandler = this.keyUpHandler.bind(this);
+    this.touchStartHandler = this.touchStartHandler.bind(this);
+    this.touchEndHandler = this.touchEndHandler.bind(this);
   }
 
   setType(type) {
@@ -238,39 +242,44 @@ class App extends Component {
       };
     });
 
-    console.log(data);
-
     bc.maximum = Math.max(Math.floor(largestCategoryCount * 1.5), 2); // TODO don't mutate state
 
     bc.data([data]);
   }
 
-  componentDidMount() {
-    document.addEventListener('keydown', e => {
-      if(e.keyCode === 32 && !this.props.spacebarDown) {
-        this.props.dispatch(setSpacebarIsDown(true));
-        e.preventDefault();
-      } else if(this.props.state === stateTypes.RUNNING) {
-        this.props.dispatch(stopTimer(Date.now()));
-        e.preventDefault();
-      }
-    });
-    document.addEventListener('keyup', e => {
-      if(e.keyCode === 32 && this.props.spacebarDown) {
-        this.props.dispatch(setSpacebarIsDown(false));
-        e.preventDefault();
-      }
-    });
-    this.timerTextContainer.addEventListener('touchstart', e => {
-      this.props.dispatch(setTouchDown(true));
+  keyDownHandler(e) {
+    if(e.keyCode === 32 && !this.props.spacebarDown) {
+      this.props.dispatch(setSpacebarIsDown(true));
       e.preventDefault();
-    });
-    this.timerTextContainer.addEventListener('touchend', e => {
-      this.props.dispatch(setTouchDown(false));
+    } else if(this.props.state === stateTypes.RUNNING) {
+      this.props.dispatch(stopTimer(Date.now()));
       e.preventDefault();
-    });
+    }
+  }
 
-    setInterval(this.forceUpdate.bind(this), 20);
+  keyUpHandler(e) {
+    if(e.keyCode === 32 && this.props.spacebarDown) {
+      this.props.dispatch(setSpacebarIsDown(false));
+      e.preventDefault();
+    }
+  }
+
+  touchStartHandler(e) {
+    this.props.dispatch(setTouchDown(true));
+    e.preventDefault();
+  }
+
+  touchEndHandler(e) {
+    this.props.dispatch(setTouchDown(false));
+    e.preventDefault();
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.keyDownHandler);
+    document.addEventListener('keyup', this.keyUpHandler);
+    this.timerTextContainer.addEventListener('touchstart', this.touchStartHandler);
+    this.timerTextContainer.addEventListener('touchend', this.touchEndHandler);
+    this.setState({ interval: setInterval(this.forceUpdate.bind(this), 20) });
   }
 
   componentDidUpdate(prevProps) {
@@ -654,7 +663,14 @@ class App extends Component {
                 () => this.generateScramble(this.props.type)
               } style={buttonStyle}>Next</button>
               <button className="header-button centered-text" onClick={
-                () => browserHistory.push('/settings')
+                () => {
+                  clearInterval(this.state.interval);
+                  document.removeEventListener('keydown', this.keyDownHandler);
+                  document.removeEventListener('keyup', this.keyUpHandler);
+                  this.timerTextContainer.removeEventListener('touchstart', this.touchStartHandler);
+                  this.timerTextContainer.removeEventListener('touchend', this.touchEndHandler);
+                  browserHistory.push('/settings');
+                }
               } style={buttonStyle}>Settings</button>
             </div>
           </div>
