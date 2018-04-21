@@ -281,6 +281,7 @@ class App extends Component {
     this.timerTextContainer.addEventListener('touchstart', this.touchStartHandler);
     this.timerTextContainer.addEventListener('touchend', this.touchEndHandler);
     this.setState({ interval: setInterval(this.forceUpdate.bind(this), 20) });
+    this.updateBarChart();
   }
 
   componentDidUpdate(prevProps) {
