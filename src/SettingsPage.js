@@ -175,6 +175,7 @@ class SettingsPage extends Component {
               defaultValue={this.props.colorScheme}
               fluid
               selection
+              upward={this.props.colorScheme !== 'CUSTOM'}
               options={
                 colorSchemes.map(colorScheme => ({ text: colorScheme.name, value: colorScheme.value }))
               }
