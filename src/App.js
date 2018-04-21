@@ -50,6 +50,7 @@ import logo from './img/logo.png'
 import { browserHistory } from 'react-router'
 
 import Navbar from './Navbar'
+import TimerText from './TimerText'
 
 import BarChart from 'barchart'
 
@@ -359,6 +360,13 @@ class App extends Component {
     }
   }
 
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.keyDownHandler);
+    document.removeEventListener('keyup', this.keyUpHandler);
+    this.timerTextContainer.removeEventListener('touchstart', this.touchStartHandler);
+    this.timerTextContainer.removeEventListener('touchend', this.touchEndHandler);
+  }
+
   render() {
     const now = Date.now();
     let displayTime;
@@ -664,11 +672,6 @@ class App extends Component {
               } style={buttonStyle}>Next</button>
               <button className="header-button centered-text" onClick={
                 () => {
-                  clearInterval(this.state.interval);
-                  document.removeEventListener('keydown', this.keyDownHandler);
-                  document.removeEventListener('keyup', this.keyUpHandler);
-                  this.timerTextContainer.removeEventListener('touchstart', this.touchStartHandler);
-                  this.timerTextContainer.removeEventListener('touchend', this.touchEndHandler);
                   browserHistory.push('/settings');
                 }
               } style={buttonStyle}>Settings</button>
@@ -769,9 +772,10 @@ class App extends Component {
             ref={timerTextContainer => this.timerTextContainer = timerTextContainer}
             className="timer-text-container"
             style={this.isReady(now) ? {} : backgroundStyle}> {/* TODO fix animation */}
-            <p className={displayTimeDivClassName}>
-              {displayTime}
-            </p>
+            <TimerText
+              className={displayTimeDivClassName}
+              /* style={{ textShadow: '0 0 50px #228DFF, 0 0 75px #228DFF' }} */
+              displayTime={displayTime} />
           </div>
         </div>
 
