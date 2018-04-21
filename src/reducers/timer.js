@@ -4,6 +4,7 @@ import Session from '../classes/Session'
 import Solve from '../classes/Solve'
 import Time from '../classes/Time'
 import * as penaltyTypes from '../constants/penaltyTypes'
+import colorSchemes from '../constants/colorSchemes'
 
 import scrambler222 from '../lib/scramble_222'
 import scrambler333 from '../lib/scramble_333'
@@ -48,16 +49,8 @@ export default function timer(
     timerJustStopped: false,
     timeObj: new Time(0),
     penaltyType: penaltyTypes.NONE,
-    colors: {
-      sideBar: '#555FFF',
-      sideBarText: '#FFFFFF',
-      topBar: '#1E90FF',
-      topBarText: '#FFFFFF',
-      buttons: '#00DDDD',
-      buttonsText: '#FFFFFF',
-      background: '#FFFFFF',
-      backgroundText: '#000000'
-    },
+    colors: colorSchemes.find(colorScheme => colorScheme.value === 'DEFAULT').colors,
+    colorScheme: 'DEFAULT',
     sessions: [
       new Session('3x3x3 Session 1', '333')
     ],
@@ -196,6 +189,9 @@ export default function timer(
     }
     case actionTypes.COLORS_SET: {
       return { ...state, colors: action.payload.colors };
+    }
+    case actionTypes.COLOR_SCHEME_SET: {
+      return { ...state, colorScheme: action.payload.colorScheme };
     }
     case actionTypes.FROM_LOCAL_STORAGE_INITTED: {
       const { type, currentSessionIndex, colors } = action.payload;

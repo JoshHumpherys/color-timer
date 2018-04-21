@@ -1,5 +1,6 @@
 import Time from '../classes/Time'
 import * as penaltyTypes from '../constants/penaltyTypes'
+import colorSchemes from '../constants/colorSchemes'
 
 export const getType = state => state.timer.type;
 export const getScrambo = state => state.timer.scramblers[state.timer.type];
@@ -13,11 +14,19 @@ export const getTouchDown = state => state.timer.touchDown;
 export const getTimerJustStopped = state => state.timer.timerJustStopped;
 export const getTimeObj = state => state.timer.timeObj;
 export const getPenaltyType = state => state.timer.penaltyType;
-export const getColors = state => state.timer.colors;
+export const getColorScheme = state => state.timer.colorScheme;
 export const getCurrentSessions = state =>
   state.timer.sessions.filter(session => session.type === state.timer.type);
 export const getCurrentSessionIndex = state =>
   getCurrentSessions(state).indexOf(state.timer.sessions[state.timer.currentSessionIndex]);
+
+export const getColors = state => {
+  if(state.timer.colorScheme === 'CUSTOM') {
+    return state.timer.colors;
+  } else {
+    return colorSchemes.find(colorScheme => colorScheme.value === state.timer.colorScheme).colors;
+  }
+};
 
 export const getSolveStats = state => {
   const solves = [...state.timer.sessions[state.timer.currentSessionIndex].solves];

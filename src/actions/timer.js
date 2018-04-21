@@ -68,6 +68,10 @@ export function setColors(colors) {
   return { type: actionTypes.COLORS_SET, payload: { colors } };
 }
 
+export function setColorScheme(colorScheme) {
+  return { type: actionTypes.COLOR_SCHEME_SET, payload: { colorScheme } };
+}
+
 export function initFromLocalStorage(sessions, type, currentSessionIndex, settings, colors) {
   return {
     type: actionTypes.FROM_LOCAL_STORAGE_INITTED,

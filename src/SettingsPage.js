@@ -3,10 +3,11 @@ import { connect } from 'react-redux'
 import { browserHistory } from 'react-router'
 import { Checkbox, Dropdown } from 'semantic-ui-react'
 import { setDisplayMillis, setInspection, setHideSolveTime, setHoldTime, setShowTimes } from './actions/settings'
-import {createSession, generateScramble, setColors, setType, switchSession} from './actions/timer'
-import { getColors, getCurrentSessionIndex, getCurrentSessions, getSolveStats, getType } from './selectors/timer'
+import { createSession, generateScramble, setColors, setColorScheme, setType, switchSession } from './actions/timer'
+import { getColors, getCurrentSessionIndex, getCurrentSessions, getType, getColorScheme } from './selectors/timer'
 import { getDisplayMillis, getHideSolveTime, getHoldTimeType, getInspection, getShowTimes } from './selectors/settings'
 import * as holdTimeTypes from './constants/holdTimeTypes'
+import colorSchemes from './constants/colorSchemes'
 import { solveTypeToString, getSolveTypeKeys } from './constants/solveTypeToString'
 import logo from './img/logo.png'
 
@@ -168,22 +169,39 @@ class SettingsPage extends Component {
             />
           </div>
           <h2>Colors</h2>
+          <div>
+            <h4>Color Scheme</h4>
+            <Dropdown
+              defaultValue={this.props.colorScheme}
+              fluid
+              selection
+              options={
+                colorSchemes.map(colorScheme => ({ text: colorScheme.name, value: colorScheme.value }))
+              }
+              onChange={(e, data) => this.props.dispatch(setColorScheme(data.value))}
+            />
+          </div>
+          <br />
           {
-            colors.map((color, i) => (
-              <div key={color.key}>
-                { i !== 0 ? <br /> : undefined }
-                <div>
-                  <h4>{color.title}</h4>
-                  <input
-                    type="color"
-                    value={this.props.colors[color.key]}
-                    onChange={
-                      e => this.props.dispatch(setColors({ ...this.props.colors, [color.key]: e.target.value }))
-                    }
-                  />
+            this.props.colorScheme === 'CUSTOM' ? (
+              colors.map((color, i) => (
+                <div key={color.key}>
+                  { i !== 0 ? <br /> : undefined }
+                  <div>
+                    <h4>{color.title}</h4>
+                    <input
+                      type="color"
+                      value={this.props.colors[color.key]}
+                      onChange={
+                        e => this.props.dispatch(setColors({ ...this.props.colors, [color.key]: e.target.value }))
+                      }
+                    />
+                  </div>
                 </div>
-              </div>
-            ))
+              ))
+            ) : (
+              <br />
+            )
           }
         </div>
       </div>
@@ -197,6 +215,7 @@ export default connect(
     return {
       type: getType(state),
       colors: getColors(state),
+      colorScheme: getColorScheme(state),
       sessions: getCurrentSessions(state),
       currentSessionIndex: getCurrentSessionIndex(state),
       inspection: getInspection(state),
