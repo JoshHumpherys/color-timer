@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Button, Checkbox, Dropdown, Form, Modal, Radio } from 'semantic-ui-react'
+import { Form, Modal, Radio } from 'semantic-ui-react'
 import {
   setType,
   generateScramble,
@@ -13,13 +13,8 @@ import {
   setSpacebarIsDown,
   setTouchDown,
   deleteSolve,
-  createSession,
-  switchSession,
-  deleteCurrentSession,
-  setPenaltyType,
-  setColors
+  setPenaltyType
 } from './actions/timer'
-import { setDisplayMillis, setInspection, setHideSolveTime, setHoldTime, setShowTimes } from './actions/settings'
 import { createModal, removeModal, setModalState } from './actions/modal'
 import {
   getType,
@@ -45,12 +40,13 @@ import * as stateTypes from './constants/stateTypes'
 import * as holdTimeTypes from './constants/holdTimeTypes'
 import * as penaltyTypes from './constants/penaltyTypes'
 import * as modalTypes from './constants/modalTypes'
-import { solveTypeToString, getSolveTypeKeys } from './constants/solveTypeToString'
 import logo from './img/logo.png'
 import { browserHistory } from 'react-router'
 
 import Navbar from './Navbar'
 import TimerText from './TimerText'
+import SubmitButton from './SubmitButton'
+import DeleteButton from './DeleteButton'
 
 import BarChart from 'barchart'
 
@@ -61,33 +57,6 @@ const holdTimes = {
   [holdTimeTypes.STACK_MAT]: 0.55,
   [holdTimeTypes.ONE_SECOND]: 1
 };
-
-class SubmitButton extends Component {
-  render() {
-    return (
-      <Button
-        key="submit"
-        positive
-        icon="checkmark"
-        labelPosition="right"
-        content={this.props.text || 'Submit'}
-        onClick={this.props.onClick} />
-    );
-  }
-}
-
-class DeleteButton extends Component {
-  render() {
-    return (
-      <Button
-        negative
-        icon="trash"
-        labelPosition="right"
-        content="Delete"
-        onClick={this.props.onClick} />
-    );
-  }
-}
 
 class App extends Component {
   constructor(props) {
@@ -402,147 +371,9 @@ class App extends Component {
       displayTimeDivClassName += ' timer-text-medium';
     }
 
-    const colors = [
-      { title: 'Top bar background color', key: 'topBar' },
-      { title: 'Top bar text color', key: 'topBarText' },
-      { title: 'Side bar background color', key: 'sideBar' },
-      { title: 'Side bar text color', key: 'sideBarText' },
-      { title: 'Buttons background color', key: 'buttons' },
-      { title: 'Buttons text color', key: 'buttonsText' },
-      { title: 'Timer background color', key: 'background' },
-      { title: 'Timer text color', key: 'backgroundText' }
-    ];
-
     // TODO move this to another file
     let modalContents;
     switch(this.props.modalType) {
-      case modalTypes.SETTINGS_MODAL:
-        modalContents = {
-          header: 'Settings',
-          body: (
-            <div>
-              <div>
-                <h4>Display Milliseconds</h4>
-                <Checkbox
-                  toggle
-                  defaultChecked={this.props.displayMillis}
-                  onChange={(e, data) => this.props.dispatch(setDisplayMillis(data.checked))}
-                />
-              </div>
-              <br />
-              <div>
-                <h4>Inspection</h4>
-                <Checkbox
-                  toggle
-                  defaultChecked={this.props.inspection}
-                  onChange={(e, data) => this.props.dispatch(setInspection(data.checked))}
-                />
-              </div>
-              <br />
-              <div>
-                <h4>Hide solve time</h4>
-                <Checkbox
-                  toggle
-                  defaultChecked={this.props.hideSolveTime}
-                  onChange={(e, data) => this.props.dispatch(setHideSolveTime(data.checked))}
-                />
-              </div>
-              <br />
-              <div>
-                <h4>Display stats</h4>
-                <Checkbox
-                  toggle
-                  defaultChecked={this.props.showTimes}
-                  onChange={(e, data) => this.props.dispatch(setShowTimes(data.checked))}
-                />
-              </div>
-              <br />
-              <div>
-                <h4>Hold time</h4>
-                <Dropdown
-                  defaultValue={this.props.holdTimeType}
-                  fluid
-                  selection
-                  options={
-                    [
-                      { text: '0', value: holdTimeTypes.NONE },
-                      { text: '0.3', value: holdTimeTypes.THREE_TENTHS_SECOND },
-                      { text: '0.55', value: holdTimeTypes.STACK_MAT },
-                      { text: '1', value: holdTimeTypes.ONE_SECOND }
-                    ]
-                  }
-                  onChange={(e, data) => this.props.dispatch(setHoldTime(data.value))}
-                />
-              </div>
-              {
-                colors.map(color => (
-                  <div key={color.key}>
-                    <br />
-                    <div>
-                      <h4>{color.title}</h4>
-                      <input
-                        type="color"
-                        value={this.props.colors[color.key]}
-                        onChange={
-                          e => this.props.dispatch(setColors({ ...this.props.colors, [color.key]: e.target.value }))
-                        }
-                      />
-                    </div>
-                  </div>
-                ))
-              }
-            </div>
-          ),
-          actions: <SubmitButton onClick={() => this.props.dispatch(removeModal())} />
-        };
-        break;
-      case modalTypes.SESSIONS_MODAL:
-        modalContents = {
-          header: solveTypeToString(this.props.type) + ' Sessions',
-          body: (
-            <div>
-              <div>
-                <h4>Create Session</h4>
-                <div className="field">
-                  <div className="ui input">
-                    <input
-                      ref={input => this.newSessionInputField = input}
-                      type="text"
-                      placeholder="Enter new session name"
-                      autoComplete="off"
-                      onKeyDown={e => {
-                        if(e.keyCode === 13) {
-                          this.createSession();
-                        }
-                      }}
-                      autoFocus />
-                  </div>
-                  <button className="ui button" onClick={this.createSession}>Create Session</button>
-                </div>
-              </div>
-              <br />
-              <div>
-                <h4>Current Session</h4>
-                <Dropdown
-                  key={'session dropdown' + this.props.currentSessionIndex} // TODO find a better way to update default
-                  defaultValue={this.props.currentSessionIndex}
-                  fluid
-                  selection
-                  options={this.props.sessions.map((session, i) => ({ text: session.name, value: i }))}
-                  onChange={(e, data) => this.props.dispatch(switchSession(data.value))}
-                />
-              </div>
-            </div>
-          ),
-          actions: [
-            <DeleteButton key="deleteButton" onClick={() => {
-              this.props.dispatch(deleteCurrentSession());
-              this.props.dispatch(removeModal());
-            }} />,
-            <SubmitButton key="submitButton" onClick={() => this.props.dispatch(removeModal())} />
-          ]
-        };
-        break;
       case modalTypes.SOLVE_MODAL:
         const { solveNumber } = this.props.modalState;
         const solve = solveNumber !== undefined ? this.props.solves[solveNumber] : undefined;
@@ -623,7 +454,6 @@ class App extends Component {
     };
 
     const buttonStyle = { backgroundColor: this.props.colors.buttons, color: this.props.colors.buttonsText };
-    const topBarStyle = { backgroundColor: this.props.colors.topBar, color: this.props.colors.topBarText };
     const sideBarStyle = { backgroundColor: this.props.colors.sideBar, color: this.props.colors.sideBarText };
     const backgroundStyle = { backgroundColor: this.props.colors.background, color: this.props.colors.backgroundText };
 
@@ -633,40 +463,6 @@ class App extends Component {
           <img src={logo} className="logo" alt="logo" />
           <h1 className="scramble">{this.props.scramble}</h1>
           <div className="header-buttons-container">
-            {/* TODO move these to a separate settings page
-              <div className="header-buttons-container-top">
-                <button className="header-button centered-text" onClick={
-                  () => alert('TODO export solves')
-                } style={buttonStyle}>Export</button>
-                <select
-                  className="header-button"
-                  onChange={e => this.setType(e.target.value)}
-                  value={this.props.type}
-                  style={buttonStyle}>
-                  {
-                    getSolveTypeKeys().map(key =>
-                      <option key={key} value={key}>
-                        {solveTypeToString(key)}
-                      </option>
-                    )
-                  }
-                </select>
-                <button className="header-button centered-text" onClick={
-                  () => this.generateScramble(this.props.type)
-                } style={buttonStyle}>Next</button>
-              </div>
-              <div className="header-buttons-container-bottom">
-                <button className="header-button centered-text" onClick={
-                  () => alert('TODO import solves')
-                } style={buttonStyle}>Import</button>
-                <button className="header-button centered-text" onClick={
-                  () => this.props.dispatch(createModal(modalTypes.SESSIONS_MODAL))
-                } style={buttonStyle}>Sessions</button>
-                <button className="header-button centered-text" onClick={
-                  () => this.props.dispatch(createModal(modalTypes.SETTINGS_MODAL))
-                } style={buttonStyle}>Settings</button>
-              </div>
-            */}
             <div className="header-buttons-container-top">
               <button className="header-button centered-text" onClick={
                 () => this.generateScramble(this.props.type)

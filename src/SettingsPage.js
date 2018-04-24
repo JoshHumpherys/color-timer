@@ -3,7 +3,9 @@ import { connect } from 'react-redux'
 import { browserHistory } from 'react-router'
 import { Checkbox, Dropdown } from 'semantic-ui-react'
 import { setDisplayMillis, setInspection, setHideSolveTime, setHoldTime, setShowTimes } from './actions/settings'
-import { createSession, generateScramble, setColors, setColorScheme, setType, switchSession } from './actions/timer'
+import {
+  createSession, deleteCurrentSession, generateScramble, setColors, setColorScheme, setType, switchSession
+} from './actions/timer'
 import { getColors, getCurrentSessionIndex, getCurrentSessions, getType, getColorScheme } from './selectors/timer'
 import { getDisplayMillis, getHideSolveTime, getHoldTimeType, getInspection, getShowTimes } from './selectors/settings'
 import * as holdTimeTypes from './constants/holdTimeTypes'
@@ -12,6 +14,7 @@ import { solveTypeToString, getSolveTypeKeys } from './constants/solveTypeToStri
 import logo from './img/logo.png'
 
 import Navbar from './Navbar'
+import DeleteButton from './DeleteButton'
 
 // TODO move these to a constants file?
 const holdTimes = {
@@ -104,14 +107,18 @@ class SettingsPage extends Component {
             <br />
             <div>
               <h4>Current Session</h4>
-              <Dropdown
-                key={'session dropdown' + this.props.currentSessionIndex} // TODO find a better way to update default
-                defaultValue={this.props.currentSessionIndex}
-                fluid
-                selection
-                options={this.props.sessions.map((session, i) => ({ text: session.name, value: i }))}
-                onChange={(e, data) => this.props.dispatch(switchSession(data.value))}
-              />
+              <div className="field">
+                <Dropdown
+                  key={'session dropdown' + this.props.currentSessionIndex} // TODO find a better way to update default
+                  defaultValue={this.props.currentSessionIndex}
+                  selection
+                  options={this.props.sessions.map((session, i) => ({ text: session.name, value: i }))}
+                  onChange={(e, data) => this.props.dispatch(switchSession(data.value))}
+                />
+                <DeleteButton key="deleteButton" onClick={() => {
+                  this.props.dispatch(deleteCurrentSession());
+                }} />
+              </div>
             </div>
           </div>
           <h2>Timer</h2>
