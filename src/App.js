@@ -175,6 +175,9 @@ class App extends Component {
   }
 
   updateBarChart() {
+    if(!this.props.showTimes) {
+      return;
+    }
     if(this.props.solves.length === 0) {
       this.removeBarChart();
       return;
