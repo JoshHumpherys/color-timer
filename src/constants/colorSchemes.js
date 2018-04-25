@@ -8,9 +8,11 @@ const colorSchemes = [
     value: 'DEFAULT',
     cssClassName: 'color-scheme-default',
     colors: {
-      sideBar: '#555FFF',
+      sideBarTop: '#555FFF',
+      sideBarBottom: '#555FFF',
       sideBarText: '#FFFFFF',
-      topBar: '#1E90FF',
+      topBarLeft: '#1E90FF',
+      topBarRight: '#1E90FF',
       topBarText: '#FFFFFF',
       buttons: '#00DDDD',
       buttonsText: '#FFFFFF',
@@ -24,9 +26,11 @@ const colorSchemes = [
     value: 'FOREST',
     cssClassName: 'color-scheme-forest',
     colors: {
-      sideBar: '#083D06',
+      sideBarTop: '#083D06',
+      sideBarBottom: '#083D06',
       sideBarText: '#FFFFFF',
-      topBar: '#0D6102',
+      topBarLeft: '#0D6102',
+      topBarRight: '#0D6102',
       topBarText: '#FFFFFF',
       buttons: '#397E39',
       buttonsText: '#FFFFFF',
@@ -40,9 +44,11 @@ const colorSchemes = [
     value: 'HACKER_GREEN',
     cssClassName: 'color-scheme-hacker-green',
     colors: {
-      sideBar: '#000000',
+      sideBarTop: '#000000',
+      sideBarBottom: '#000000',
       sideBarText: '#00FF00',
-      topBar: '#000000',
+      topBarLeft: '#000000',
+      topBarRight: '#000000',
       topBarText: '#00FF00',
       buttons: '#000000',
       buttonsText: '#00FF00',
@@ -56,9 +62,11 @@ const colorSchemes = [
     value: 'HACKER_PINK',
     cssClassName: 'color-scheme-hacker-pink',
     colors: {
-      sideBar: '#000000',
+      sideBarTop: '#000000',
+      sideBarBottom: '#000000',
       sideBarText: '#FF00FF',
-      topBar: '#000000',
+      topBarLeft: '#000000',
+      topBarRight: '#000000',
       topBarText: '#FF00FF',
       buttons: '#000000',
       buttonsText: '#FF00FF',
@@ -72,9 +80,11 @@ const colorSchemes = [
     value: 'PLUM',
     cssClassName: 'color-scheme-plum',
     colors: {
-      sideBar: '#341236',
+      sideBarTop: '#341236',
+      sideBarBottom: '#341236',
       sideBarText: '#F7D0FF',
-      topBar: '#612263',
+      topBarLeft: '#612263',
+      topBarRight: '#612263',
       topBarText: '#D48CD8',
       buttons: '#3F143E',
       buttonsText: '#FDE6FF',
@@ -88,9 +98,11 @@ const colorSchemes = [
     value: 'OCEAN',
     cssClassName: 'color-scheme-ocean',
     colors: {
-      sideBar: '#5E73BC',
+      sideBarTopp: '#5E73BC',
+      sideBarBottom: '#5E73BC',
       sideBarText: '#E7E1EC',
-      topBar: '#002263',
+      topBarLeft: '#002263',
+      topBarRight: '#002263',
       topBarText: '#DBE5FF',
       buttons: '#3D4A77',
       buttonsText: '#D1D6F2',
@@ -99,29 +111,34 @@ const colorSchemes = [
       glow: '#3D4A77',
     },
   },
-  // { // TODO add gradients for default color schemes
-  //   name: 'Sunset',
-  //   value: 'SUNSET',
-  //   cssClassName: 'color-scheme-sunset',
-  //   colors: {
-  //     sideBar: '#005580', // UP TO #FF5580
-  //     sideBarText: '#E7E1EC',
-  //     topBar: '#FF5580', // TO #FFFF80
-  //     topBarText: '#DBE5FF',
-  //     buttons: '#3D4A77',
-  //     buttonsText: '#D1D6F2',
-  //     background: '#353E73',
-  //     backgroundText: '#FFFFFF',
-  //   },
-  // },
+  {
+    name: 'Sunset',
+    value: 'SUNSET',
+    cssClassName: 'color-scheme-sunset',
+    colors: {
+      sideBarTop: '#FF5580',
+      sideBarBottom: '#005580',
+      sideBarText: '#E7E1EC',
+      topBarLeft: '#FF5580',
+      topBarRight: '#FFFF80',
+      topBarText: '#DBE5FF',
+      buttons: '#FFFFFF',
+      buttonsText: '#005580',
+      background: '#FFFFFF',
+      backgroundText: '#000000',
+      glow: '#3D4A77',
+    },
+  },
   {
     name: 'Desert',
     value: 'DESERT',
     cssClassName: 'color-scheme-desert',
     colors: {
-      sideBar: '#8A5115',
+      sideBarTop: '#8A5115',
+      sideBarBottom: '#8A5115',
       sideBarText: '#E7E1EC',
-      topBar: '#D79840',
+      topBarLeft: '#D79840',
+      topBarRight: '#D79840',
       topBarText: '#F3DD87',
       buttons: '#C97D1A',
       buttonsText: '#F2EFAE',
@@ -130,21 +147,24 @@ const colorSchemes = [
       glow: '#C97D1A',
     },
   },
-  // {
-  //   name: 'Aurora',
-  //   value: 'AURORA',
-  //   cssClassName: 'color-scheme-aurora',
-  //   colors: {
-  //     sideBar: '#002286', // TO #573464
-  //     sideBarText: '#FFFFFF', // rgb 231, 225, 236
-  //     topBar: '#002286', // TO #573464
-  //     topBarText: '#FFFFFF', // rgb 219, 229, 255
-  //     buttons: '#FFFFFF', // don't remember
-  //     buttonsText: '#000000', // don't remember
-  //     background: '#FFFFFF', // rgb 231, 225, 236 same as side bar text
-  //     backgroundText: '#000000', // I think this was black
-  //   },
-  // },
+  {
+    name: 'Aurora',
+    value: 'AURORA',
+    cssClassName: 'color-scheme-aurora',
+    colors: {
+      sideBarTop: '#002286',
+      sideBarBottom: '#573464',
+      sideBarText: '#E7E1EC',
+      topBarLeft: '#002286',
+      topBarRight: '#573464',
+      topBarText: '#DBE5FF',
+      buttons: '#FFFFFF', // don't remember
+      buttonsText: '#000000', // don't remember
+      background: '#E7E1EC',
+      backgroundText: '#000000', // I think this was black
+      glow: '#FFFFFF',
+    },
+  },
 ];
 
 export default colorSchemes;

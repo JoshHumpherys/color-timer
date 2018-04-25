@@ -10,7 +10,10 @@ class Navbar extends Component {
   }
 
   render() {
-    const topBarStyle = { backgroundColor: this.props.colors.topBar, color: this.props.colors.topBarText };
+    const topBarStyle = {
+      background: 'linear-gradient(to right, ' + this.props.colors.topBarLeft + ', ' + this.props.colors.topBarRight + ')',
+      color: this.props.colors.topBarText
+    };
     return (
       <header className="header" style={topBarStyle}>
         {this.props.children}

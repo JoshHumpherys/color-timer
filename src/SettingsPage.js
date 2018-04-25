@@ -52,9 +52,11 @@ class SettingsPage extends Component {
 
   render() {
     const colors = [
-      { title: 'Top bar background color', key: 'topBar' },
+      { title: 'Top bar background color (left)', key: 'topBarLeft' },
+      { title: 'Top bar background color (right)', key: 'topBarRight' },
       { title: 'Top bar text color', key: 'topBarText' },
-      { title: 'Side bar background color', key: 'sideBar' },
+      { title: 'Side bar background color (top)', key: 'sideBarTop' },
+      { title: 'Side bar background color (bottom)', key: 'sideBarBottom' },
       { title: 'Side bar text color', key: 'sideBarText' },
       { title: 'Buttons background color', key: 'buttons' },
       { title: 'Buttons text color', key: 'buttonsText' },

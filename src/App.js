@@ -456,7 +456,10 @@ class App extends Component {
     };
 
     const buttonStyle = { backgroundColor: this.props.colors.buttons, color: this.props.colors.buttonsText };
-    const sideBarStyle = { backgroundColor: this.props.colors.sideBar, color: this.props.colors.sideBarText };
+    const sideBarStyle = {
+      background: 'linear-gradient(to bottom, ' + this.props.colors.sideBarTop + ', ' + this.props.colors.sideBarBottom + ')',
+      color: this.props.colors.sideBarText,
+    };
     const backgroundStyle = { backgroundColor: this.props.colors.background, color: this.props.colors.backgroundText };
 
     const getTextShadow = () => {
