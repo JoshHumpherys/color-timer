@@ -31,6 +31,7 @@ import {
   getPenaltyType,
   getColors,
   getColorSchemeClassName,
+  getGlow,
   getCurrentSessions,
   getCurrentSessionIndex,
   getSolveStats
@@ -458,6 +459,24 @@ class App extends Component {
     const sideBarStyle = { backgroundColor: this.props.colors.sideBar, color: this.props.colors.sideBarText };
     const backgroundStyle = { backgroundColor: this.props.colors.background, color: this.props.colors.backgroundText };
 
+    const getTextShadow = () => {
+      if(this.props.glow) {
+        const textColorSizes = [5, 10, 15];
+        const glowColorSizes = [20, 35, 40, 50, 75];
+        let glowString = '';
+        for(let i = 0; i < textColorSizes.length; i++) {
+          glowString += (i === 0 ? '' : ', ') + '0 0 ' + textColorSizes[i] + 'px ' + this.props.colors.backgroundText;
+        }
+        for(let i = 0; i < glowColorSizes.length; i++) {
+          const comma = (textColorSizes.length === 0 ? '' : ', ');
+          glowString += comma + '0 0 ' + glowColorSizes[i] + 'px ' + this.props.colors.glow;
+        }
+        return glowString;
+      } else {
+        return '';
+      }
+    };
+
     return (
       <div className={'app ' + this.props.colorSchemeClassName}>
         <Navbar>
@@ -572,7 +591,7 @@ class App extends Component {
             style={this.isReady(now) ? {} : backgroundStyle}> {/* TODO fix animation */}
             <TimerText
               className={displayTimeDivClassName}
-              /* style={{ textShadow: '0 0 50px #228DFF, 0 0 75px #228DFF' }} */
+              style={{ textShadow: getTextShadow() }}
               displayTime={displayTime} />
           </div>
         </div>
@@ -612,6 +631,7 @@ export default connect(
       penaltyType: getPenaltyType(state),
       colors: getColors(state),
       colorSchemeClassName: getColorSchemeClassName(state),
+      glow: getGlow(state),
       sessions: getCurrentSessions(state),
       currentSessionIndex: getCurrentSessionIndex(state),
       bests: solveStats.bests,

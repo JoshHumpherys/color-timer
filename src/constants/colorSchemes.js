@@ -15,7 +15,8 @@ const colorSchemes = [
       buttons: '#00DDDD',
       buttonsText: '#FFFFFF',
       background: '#FFFFFF',
-      backgroundText: '#000000'
+      backgroundText: '#000000',
+      glow: '#228DFF',
     },
   },
   {
@@ -31,6 +32,7 @@ const colorSchemes = [
       buttonsText: '#FFFFFF',
       background: '#C5FFC2',
       backgroundText: '#000000',
+      glow: '#397E39',
     },
   },
   {
@@ -46,6 +48,7 @@ const colorSchemes = [
       buttonsText: '#00FF00',
       background: '#000000',
       backgroundText: '#00FF00',
+      glow: '#000000',
     },
   },
   {
@@ -61,6 +64,7 @@ const colorSchemes = [
       buttonsText: '#FF00FF',
       background: '#000000',
       backgroundText: '#FF00FF',
+      glow: '#000000',
     },
   },
   {
@@ -76,6 +80,7 @@ const colorSchemes = [
       buttonsText: '#FDE6FF',
       background: '#EBD1F3',
       backgroundText: '#000000',
+      glow: '#3F143E',
     },
   },
   {
@@ -91,6 +96,7 @@ const colorSchemes = [
       buttonsText: '#D1D6F2',
       background: '#353E73',
       backgroundText: '#FFFFFF',
+      glow: '#3D4A77',
     },
   },
   // { // TODO add gradients for default color schemes
@@ -121,6 +127,7 @@ const colorSchemes = [
       buttonsText: '#F2EFAE',
       background: '#F3DD87',
       backgroundText: '#5D3400',
+      glow: '#C97D1A',
     },
   },
   // {

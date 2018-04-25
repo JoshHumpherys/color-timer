@@ -4,9 +4,11 @@ import { browserHistory } from 'react-router'
 import { Checkbox, Dropdown } from 'semantic-ui-react'
 import { setDisplayMillis, setInspection, setHideSolveTime, setHoldTime, setShowTimes } from './actions/settings'
 import {
-  createSession, deleteCurrentSession, generateScramble, setColors, setColorScheme, setType, switchSession
+  createSession, deleteCurrentSession, generateScramble, setColors, setColorScheme, setType, switchSession, setGlow
 } from './actions/timer'
-import { getColors, getCurrentSessionIndex, getCurrentSessions, getType, getColorScheme } from './selectors/timer'
+import {
+  getColors, getCurrentSessionIndex, getCurrentSessions, getType, getColorScheme, getGlow
+} from './selectors/timer'
 import { getDisplayMillis, getHideSolveTime, getHoldTimeType, getInspection, getShowTimes } from './selectors/settings'
 import * as holdTimeTypes from './constants/holdTimeTypes'
 import colorSchemes from './constants/colorSchemes'
@@ -57,7 +59,8 @@ class SettingsPage extends Component {
       { title: 'Buttons background color', key: 'buttons' },
       { title: 'Buttons text color', key: 'buttonsText' },
       { title: 'Timer background color', key: 'background' },
-      { title: 'Timer text color', key: 'backgroundText' }
+      { title: 'Timer text color', key: 'backgroundText' },
+      { title: 'Glow color', key: 'glow' },
     ];
 
     const buttonStyle = { backgroundColor: this.props.colors.buttons, color: this.props.colors.buttonsText };
@@ -190,6 +193,15 @@ class SettingsPage extends Component {
             />
           </div>
           <br />
+          <div>
+            <h4>Glow (experimental)</h4>
+            <Checkbox
+              toggle
+              defaultChecked={this.props.glow}
+              onChange={(e, data) => this.props.dispatch(setGlow(data.checked))}
+            />
+          </div>
+          <br />
           {
             this.props.colorScheme === 'CUSTOM' ? (
               colors.map((color, i) => (
@@ -224,6 +236,7 @@ export default connect(
       type: getType(state),
       colors: getColors(state),
       colorScheme: getColorScheme(state),
+      glow: getGlow(state),
       sessions: getCurrentSessions(state),
       currentSessionIndex: getCurrentSessionIndex(state),
       inspection: getInspection(state),

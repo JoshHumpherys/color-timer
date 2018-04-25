@@ -51,6 +51,7 @@ export default function timer(
     penaltyType: penaltyTypes.NONE,
     colors: colorSchemes.find(colorScheme => colorScheme.value === 'DEFAULT').colors,
     colorScheme: 'DEFAULT',
+    glow: false,
     sessions: [
       new Session('3x3x3 Session 1', '333')
     ],
@@ -193,8 +194,11 @@ export default function timer(
     case actionTypes.COLOR_SCHEME_SET: {
       return { ...state, colorScheme: action.payload.colorScheme };
     }
+    case actionTypes.GLOW_SET: {
+      return { ...state, glow: action.payload.glow };
+    }
     case actionTypes.FROM_LOCAL_STORAGE_INITTED: {
-      const { type, currentSessionIndex, colors } = action.payload;
+      const { type, currentSessionIndex, colors, colorScheme, glow } = action.payload;
       let sessions = [...action.payload.sessions].map(session =>
           new Session(session.name, session.type, session.solves.map(solve =>
               new Solve(solve.scramble, new Time(solve.timeObj.timeMillis, solve.timeObj.penaltyType), solve.comment)
@@ -207,7 +211,9 @@ export default function timer(
         type,
         currentSessionIndex,
         scramble: getScramble(state.scramblers, type),
-        colors
+        colors: { ...state.colors, ...colors },
+        colorScheme: colorScheme || state.colorScheme,
+        glow: glow || state.glow
       };
     }
     default: {

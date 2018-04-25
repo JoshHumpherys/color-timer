@@ -28,6 +28,8 @@ store.subscribe(() =>  {
   localStorage.setItem('currentSessionIndex', JSON.stringify(state.timer.currentSessionIndex));
   localStorage.setItem('settings', JSON.stringify(state.settings));
   localStorage.setItem('colors', JSON.stringify(state.timer.colors));
+  localStorage.setItem('colorScheme', JSON.stringify(state.timer.colorScheme));
+  localStorage.setItem('glow', JSON.stringify(state.timer.glow));
 });
 
 const config = {
@@ -45,8 +47,11 @@ const type = JSON.parse(localStorage.getItem('type'));
 const currentSessionIndex = JSON.parse(localStorage.getItem('currentSessionIndex'));
 const settings = JSON.parse(localStorage.getItem('settings'));
 const colors = JSON.parse(localStorage.getItem('colors'));
-if(sessions !== null && type !== null && currentSessionIndex !== null && settings !== null && colors !== null) {
-  store.dispatch(initFromLocalStorage(sessions, type, currentSessionIndex, settings, colors));
+const colorScheme = JSON.parse(localStorage.getItem('colorScheme'));
+const glow = JSON.parse(localStorage.getItem('glow'));
+if(sessions !== null && type !== null && currentSessionIndex !== null && settings !== null && colors !== null &&
+  colorScheme !== null && glow !== null) {
+  store.dispatch(initFromLocalStorage(sessions, type, currentSessionIndex, settings, colors, colorScheme, glow));
 }
 
 ReactDOM.render(

@@ -72,9 +72,13 @@ export function setColorScheme(colorScheme) {
   return { type: actionTypes.COLOR_SCHEME_SET, payload: { colorScheme } };
 }
 
-export function initFromLocalStorage(sessions, type, currentSessionIndex, settings, colors) {
+export function setGlow(glow) {
+  return { type: actionTypes.GLOW_SET, payload: { glow } };
+}
+
+export function initFromLocalStorage(sessions, type, currentSessionIndex, settings, colors, colorScheme, glow) {
   return {
     type: actionTypes.FROM_LOCAL_STORAGE_INITTED,
-    payload: { sessions, type, currentSessionIndex, settings, colors }
+    payload: { sessions, type, currentSessionIndex, settings, colors, colorScheme, glow }
   };
 }

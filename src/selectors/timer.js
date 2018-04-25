@@ -36,6 +36,8 @@ export const getColorSchemeClassName = state => {
   }
 };
 
+export const getGlow = state => state.timer.glow;
+
 export const getSolveStats = state => {
   const solves = [...state.timer.sessions[state.timer.currentSessionIndex].solves];
   const timeObjs = solves.map((solve, i) => ({ ...solve.timeObj, solveNumber: i }));
