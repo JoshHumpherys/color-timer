@@ -28,6 +28,14 @@ export const getColors = state => {
   }
 };
 
+export const getColorSchemeClassName = state => {
+  if(state.timer.colorScheme === 'CUSTOM') {
+    return '';
+  } else {
+    return colorSchemes.find(colorScheme => colorScheme.value === state.timer.colorScheme).cssClassName;
+  }
+};
+
 export const getSolveStats = state => {
   const solves = [...state.timer.sessions[state.timer.currentSessionIndex].solves];
   const timeObjs = solves.map((solve, i) => ({ ...solve.timeObj, solveNumber: i }));

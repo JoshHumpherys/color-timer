@@ -30,6 +30,7 @@ import {
   getTimeObj,
   getPenaltyType,
   getColors,
+  getColorSchemeClassName,
   getCurrentSessions,
   getCurrentSessionIndex,
   getSolveStats
@@ -458,7 +459,7 @@ class App extends Component {
     const backgroundStyle = { backgroundColor: this.props.colors.background, color: this.props.colors.backgroundText };
 
     return (
-      <div className="app">
+      <div className={'app ' + this.props.colorSchemeClassName}>
         <Navbar>
           <img src={logo} className="logo" alt="logo" />
           <h1 className="scramble">{this.props.scramble}</h1>
@@ -478,7 +479,7 @@ class App extends Component {
         <div className={'timer' + (this.isReady(now) ? ' ready' : '')}>
           {
             this.props.showTimes ? (
-              <div className="timer-times-container" style={sideBarStyle}>
+              <div className="timer-times-container color-scheme-default" style={sideBarStyle}>
                 <div id="chart-container" />
                 <table className="timer-times-table">
                   <tbody>
@@ -610,6 +611,7 @@ export default connect(
       timeObj: getTimeObj(state),
       penaltyType: getPenaltyType(state),
       colors: getColors(state),
+      colorSchemeClassName: getColorSchemeClassName(state),
       sessions: getCurrentSessions(state),
       currentSessionIndex: getCurrentSessionIndex(state),
       bests: solveStats.bests,
